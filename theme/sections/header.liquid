@@ -1,6 +1,6 @@
 {%- liquid
   assign logo_text = section.settings.logo_text | default: 'PakStyle'
-  assign announcement_text = section.settings.announcement_text | default: 'Free Shipping on orders above PKR 2,500 🚀'
+  assign announcement_text = section.settings.announcement_text | default: 'Free Shipping on orders above PKR 2,500'
   assign sticky_enabled = section.settings.sticky_header_enabled
   assign menu = linklists[section.settings.menu]
 -%}
@@ -80,7 +80,6 @@
         <a href="{{ routes.collections_url }}/men" class="ps-header__nav-link">Men</a>
         <a href="{{ routes.collections_url }}/sale" class="ps-header__nav-link">Sale</a>
         <a href="{{ routes.root_url }}pages/about" class="ps-header__nav-link">About</a>
-        <a href="{{ routes.root_url }}pages/contact" class="ps-header__nav-link">Contact</a>
       {%- endif -%}
     </nav>
 
