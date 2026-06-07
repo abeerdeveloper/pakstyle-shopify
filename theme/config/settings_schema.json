@@ -100,6 +100,34 @@
     ]
   },
   {
+    "name": "Announcement bar",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "announcement_enabled",
+        "label": "Show announcement bar",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "announcement_text",
+        "label": "Announcement text",
+        "default": "Free shipping on orders over Rs. 3,000 — Shop the new drop"
+      }
+    ]
+  },
+  {
+    "name": "Social sharing",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "og_image",
+        "label": "Default social share image",
+        "info": "Used when a page has no featured image."
+      }
+    ]
+  },
+  {
     "name": "Spacing",
     "settings": [
       {

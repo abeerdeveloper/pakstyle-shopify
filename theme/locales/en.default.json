@@ -2,6 +2,8 @@
   "general": {
     "store_name": "PakStyle",
     "tagline": "Bold style for the modern man",
+    "announcement": "Store announcement",
+    "announcement_default": "Free shipping on orders over Rs. 3,000 — Shop the new drop",
     "continue_shopping": "Continue shopping",
     "search": "Search",
     "menu": "Menu",
@@ -27,6 +29,7 @@
     "title": "Your cart",
     "empty": "Your cart is empty",
     "checkout": "Checkout",
+    "view_cart": "View cart",
     "subtotal": "Subtotal",
     "remove": "Remove",
     "update": "Update cart"

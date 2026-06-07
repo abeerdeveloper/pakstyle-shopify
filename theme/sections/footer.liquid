@@ -1,0 +1,38 @@
+<footer class="site-footer" role="contentinfo">
+  <div class="container site-footer__inner">
+    <div>
+      <p class="site-footer__brand">{{ section.settings.brand_name | default: shop.name }}</p>
+      <p class="site-footer__tagline">{{ section.settings.tagline | default: 'general.tagline' | t }}</p>
+    </div>
+
+    <div class="site-footer__bottom">
+      <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. {{ section.settings.copyright_text }}</p>
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    {
+      "type": "text",
+      "id": "brand_name",
+      "label": "Brand name",
+      "default": "PakStyle"
+    },
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "Tagline",
+      "default": "Bold style for the modern man"
+    },
+    {
+      "type": "text",
+      "id": "copyright_text",
+      "label": "Copyright text",
+      "default": "All rights reserved."
+    }
+  ]
+}
+{% endschema %}

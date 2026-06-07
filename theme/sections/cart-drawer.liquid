@@ -1,0 +1,46 @@
+<div class="cart-drawer" data-cart-drawer aria-hidden="true">
+  <div class="cart-drawer__overlay" data-cart-close aria-hidden="true"></div>
+
+  <aside
+    class="cart-drawer__panel"
+    role="dialog"
+    aria-modal="true"
+    aria-label="{{ 'cart.title' | t }}"
+  >
+    <div class="flex-between" style="padding: var(--spacing-md); border-bottom: 1px solid var(--color-border);">
+      <h2 style="font-size: var(--font-size-xl); margin: 0;">{{ 'cart.title' | t }}</h2>
+      <button
+        type="button"
+        class="btn-ghost btn"
+        data-cart-close
+        aria-label="{{ 'general.close' | t }}"
+      >
+        &times;
+      </button>
+    </div>
+
+    <div style="flex: 1; overflow-y: auto; padding: var(--spacing-md);" data-cart-items>
+      <p class="text-light text-center">{{ 'cart.empty' | t }}</p>
+    </div>
+
+    <div style="padding: var(--spacing-md); border-top: 1px solid var(--color-border);">
+      <div class="flex-between" style="margin-bottom: var(--spacing-sm);">
+        <span>{{ 'cart.subtotal' | t }}</span>
+        <strong data-cart-subtotal>{{ cart.total_price | money }}</strong>
+      </div>
+      <a href="{{ routes.cart_url }}" class="btn btn-secondary" style="width: 100%; margin-bottom: var(--spacing-xs);">
+        {{ 'cart.view_cart' | t }}
+      </a>
+      <a href="{{ routes.cart_url }}" class="btn btn-primary" style="width: 100%;">
+        {{ 'cart.checkout' | t }}
+      </a>
+    </div>
+  </aside>
+</div>
+
+{% schema %}
+{
+  "name": "Cart drawer",
+  "settings": []
+}
+{% endschema %}

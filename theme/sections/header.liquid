@@ -1,0 +1,89 @@
+<header class="site-header" data-site-header role="banner">
+  <div class="container site-header__inner">
+    <button
+      type="button"
+      class="site-header__menu-toggle"
+      data-mobile-menu-toggle
+      aria-expanded="false"
+      aria-controls="MobileMenu"
+      aria-label="{{ 'accessibility.open_menu' | t }}"
+    >
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </button>
+
+    <a href="{{ routes.root_url }}" class="site-header__logo">
+      {{ section.settings.logo_text | default: shop.name }}
+    </a>
+
+    <nav class="site-header__nav" aria-label="{{ 'accessibility.main_navigation' | t }}">
+      {%- for link in linklists[section.settings.menu].links -%}
+        <a href="{{ link.url }}" class="site-header__link">{{ link.title }}</a>
+      {%- else -%}
+        <a href="{{ routes.all_products_collection_url }}" class="site-header__link">{{ 'collections.title' | t }}</a>
+      {%- endfor -%}
+    </nav>
+
+    <div class="site-header__actions">
+      <a href="{{ routes.search_url }}" class="btn-ghost btn" aria-label="{{ 'general.search' | t }}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+          <path d="M20 20l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </a>
+
+      <a href="{{ routes.account_url }}" class="btn-ghost btn" aria-label="{{ 'customer.account' | t }}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/>
+          <path d="M5 20c0-3.866 3.134-7 7-7s7 3.134 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </a>
+
+      <button
+        type="button"
+        class="btn-ghost btn"
+        data-cart-open
+        aria-label="{{ 'cart.title' | t }}"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M6 6h15l-1.5 9h-12L6 6z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+          <circle cx="10" cy="20" r="1.5" fill="currentColor"/>
+          <circle cx="18" cy="20" r="1.5" fill="currentColor"/>
+        </svg>
+        <span data-cart-count>{{ cart.item_count }}</span>
+      </button>
+    </div>
+  </div>
+
+  <div id="MobileMenu" class="mobile-menu" data-mobile-menu aria-hidden="true">
+    <nav class="mobile-menu__nav" aria-label="{{ 'accessibility.main_navigation' | t }}">
+      {%- for link in linklists[section.settings.menu].links -%}
+        <a href="{{ link.url }}" class="mobile-menu__link">{{ link.title }}</a>
+      {%- else -%}
+        <a href="{{ routes.all_products_collection_url }}" class="mobile-menu__link">{{ 'collections.title' | t }}</a>
+        <a href="{{ routes.root_url }}" class="mobile-menu__link">{{ 'general.continue_shopping' | t }}</a>
+      {%- endfor -%}
+    </nav>
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "text",
+      "id": "logo_text",
+      "label": "Logo text",
+      "default": "PakStyle"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu",
+      "default": "main-menu"
+    }
+  ]
+}
+{% endschema %}

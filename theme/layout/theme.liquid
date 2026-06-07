@@ -1,43 +1,169 @@
 <!doctype html>
-<html lang="{{ request.locale.iso_code }}">
+<html class="no-js" lang="{{ request.locale.iso_code }}">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="{{ settings.color_primary }}">
 
-    <title>
-      {{ page_title }}
-      {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
-      {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
-      {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
-    </title>
+    {%- liquid
+      assign seo_title = page_title
+      if current_tags
+        assign seo_title = seo_title | append: ' – tagged "' | append: current_tags | join: ', ' | append: '"'
+      endif
+      if current_page != 1
+        assign seo_title = seo_title | append: ' – Page ' | append: current_page
+      endif
+      unless seo_title contains shop.name
+        assign seo_title = seo_title | append: ' – ' | append: shop.name
+      endunless
 
-    {%- if page_description -%}
-      <meta name="description" content="{{ page_description | escape }}">
-    {%- endif -%}
+      assign seo_description = page_description | default: shop.description | default: 'PakStyle — bold casual wear for young men in Pakistan.'
+      assign og_image = page_image | default: settings.og_image | default: shop.brand.logo
+    -%}
+
+    <title>{{ seo_title | escape }}</title>
+    <meta name="description" content="{{ seo_description | escape }}">
+    <meta name="robots" content="index, follow">
 
     <link rel="canonical" href="{{ canonical_url }}">
 
-    {%- if settings.font_heading != blank -%}
-      <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+    {%- comment -%} Open Graph {%- endcomment -%}
+    <meta property="og:site_name" content="{{ shop.name | escape }}">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ seo_title | escape }}">
+    <meta property="og:description" content="{{ seo_description | escape }}">
+    <meta property="og:url" content="{{ canonical_url }}">
+    {%- if og_image -%}
+      <meta property="og:image" content="https:{{ og_image | image_url: width: 1200 }}">
+      <meta property="og:image:alt" content="{{ seo_title | escape }}">
     {%- endif -%}
+
+    {%- comment -%} Twitter Card {%- endcomment -%}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ seo_title | escape }}">
+    <meta name="twitter:description" content="{{ seo_description | escape }}">
+    {%- if og_image -%}
+      <meta name="twitter:image" content="https:{{ og_image | image_url: width: 1200 }}">
+    {%- endif -%}
+
+    {%- comment -%} Google Fonts — Inter (body) + Poppins (headings) {%- endcomment -%}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    >
+
+    {%- comment -%} CSS custom properties from theme settings {%- endcomment -%}
+    <style>
+      :root {
+        --color-primary: {{ settings.color_primary | default: '#0F172A' }};
+        --color-accent: {{ settings.color_accent | default: '#F97316' }};
+        --color-background: {{ settings.color_background | default: '#FFFFFF' }};
+        --color-text: {{ settings.color_text | default: '#1A1A1A' }};
+        --color-text-light: {{ settings.color_text_muted | default: '#6B7280' }};
+        --color-border: {{ settings.color_border | default: '#E5E7EB' }};
+        --font-heading: 'Poppins', sans-serif;
+        --font-body: 'Inter', sans-serif;
+        --spacing-xs: 8px;
+        --spacing-sm: 16px;
+        --spacing-md: 24px;
+        --spacing-lg: 48px;
+        --spacing-xl: 80px;
+        --container-width: 1280px;
+        --border-radius-sm: 4px;
+        --border-radius-md: 8px;
+        --border-radius-lg: 16px;
+        --transition: all 0.3s ease;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+        --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+      }
+    </style>
+
+    {%- comment -%} Schema.org JSON-LD structured data {%- endcomment -%}
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Store",
+        "name": {{ shop.name | json }},
+        "url": {{ shop.url | json }},
+        "description": {{ shop.description | default: 'Bold casual clothing for young men in Pakistan.' | json }},
+        "image": {%- if shop.brand.logo -%}{{ shop.brand.logo | image_url: width: 512 | prepend: 'https:' | json }}{%- else -%}{{ shop.url | append: '/cdn/shop/files/logo.png' | json }}{%- endif -%},
+        "address": {
+          "@type": "PostalAddress",
+          "addressCountry": "PK"
+        }
+      }
+    </script>
 
     {{ content_for_header }}
 
     {{ 'theme.css' | asset_url | stylesheet_tag }}
 
+    <script>
+      window.PakStyleConfig = {
+        moneyFormat: {{ shop.money_format | json }},
+        currency: {{ cart.currency.iso_code | json }},
+        cartUrl: {{ routes.cart_url | json }},
+        rootUrl: {{ routes.root_url | json }}
+      };
+      document.documentElement.classList.remove('no-js');
+      document.documentElement.classList.add('js');
+    </script>
+
     <script src="{{ 'theme.js' | asset_url }}" defer></script>
   </head>
 
-  <body class="template-{{ template.name | handle }}">
-    <a class="skip-link" href="#MainContent">
+  <body class="template-{{ template.name | handle }}{% if template.suffix %} template-{{ template.name | handle }}-{{ template.suffix }}{% endif %}">
+    <a class="skip-link" href="#main-content">
       {{ 'accessibility.skip_to_content' | t }}
     </a>
 
+    {%- if settings.announcement_enabled != false -%}
+      <div
+        id="announcement-bar"
+        class="announcement-bar"
+        data-announcement-bar
+        role="region"
+        aria-label="{{ 'general.announcement' | t }}"
+        {% if settings.announcement_text != blank %}
+          data-message="{{ settings.announcement_text | escape }}"
+        {% else %}
+          data-message="{{ 'general.announcement_default' | t }}"
+        {% endif %}
+      >
+        <div class="container announcement-bar__inner">
+          <p class="announcement-bar__text">
+            {%- if settings.announcement_text != blank -%}
+              {{ settings.announcement_text }}
+            {%- else -%}
+              {{ 'general.announcement_default' | t }}
+            {%- endif -%}
+          </p>
+          <button
+            type="button"
+            class="announcement-bar__close"
+            data-announcement-close
+            aria-label="{{ 'general.close' | t }}"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      </div>
+    {%- endif -%}
+
     <div id="PageContainer" class="page-container">
-      <main id="MainContent" class="main-content" role="main" tabindex="-1">
+      {% section 'header' %}
+
+      <main id="main-content" class="main-content" role="main" tabindex="-1">
         {{ content_for_layout }}
       </main>
+
+      {% section 'footer' %}
     </div>
+
+    {% section 'cart-drawer' %}
   </body>
 </html>
