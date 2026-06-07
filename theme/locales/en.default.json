@@ -3,12 +3,16 @@
     "store_name": "PakStyle",
     "tagline": "Bold style for the modern man",
     "announcement": "Store announcement",
-    "announcement_default": "Free shipping on orders over Rs. 3,000 — Shop the new drop",
+    "announcement_default": "Free Shipping on orders above PKR 2,500 🚀",
     "continue_shopping": "Continue shopping",
     "search": "Search",
     "menu": "Menu",
     "close": "Close",
     "loading": "Loading…"
+  },
+  "header": {
+    "wishlist": "Wishlist",
+    "search_placeholder": "Search for products..."
   },
   "accessibility": {
     "skip_to_content": "Skip to content",
@@ -27,12 +31,14 @@
   },
   "cart": {
     "title": "Your cart",
+    "title_with_count": "Your Cart ({{ count }} items)",
     "empty": "Your cart is empty",
     "checkout": "Checkout",
     "view_cart": "View cart",
     "subtotal": "Subtotal",
     "remove": "Remove",
-    "update": "Update cart"
+    "update": "Update cart",
+    "start_shopping": "Start Shopping"
   },
   "collections": {
     "title": "Collections",
@@ -44,6 +50,16 @@
     "login": "Log in",
     "logout": "Log out",
     "register": "Create account"
+  },
+  "footer": {
+    "quick_links": "Quick Links",
+    "help": "Help",
+    "newsletter": "Newsletter",
+    "newsletter_text": "Get exclusive drops, style tips, and early access to sales.",
+    "newsletter_placeholder": "Enter your email",
+    "subscribe": "Subscribe",
+    "newsletter_success": "Thanks for subscribing!",
+    "payment_methods": "Accepted payment methods"
   },
   "404": {
     "title": "Page not found",

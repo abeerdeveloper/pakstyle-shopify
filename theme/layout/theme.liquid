@@ -121,39 +121,6 @@
       {{ 'accessibility.skip_to_content' | t }}
     </a>
 
-    {%- if settings.announcement_enabled != false -%}
-      <div
-        id="announcement-bar"
-        class="announcement-bar"
-        data-announcement-bar
-        role="region"
-        aria-label="{{ 'general.announcement' | t }}"
-        {% if settings.announcement_text != blank %}
-          data-message="{{ settings.announcement_text | escape }}"
-        {% else %}
-          data-message="{{ 'general.announcement_default' | t }}"
-        {% endif %}
-      >
-        <div class="container announcement-bar__inner">
-          <p class="announcement-bar__text">
-            {%- if settings.announcement_text != blank -%}
-              {{ settings.announcement_text }}
-            {%- else -%}
-              {{ 'general.announcement_default' | t }}
-            {%- endif -%}
-          </p>
-          <button
-            type="button"
-            class="announcement-bar__close"
-            data-announcement-close
-            aria-label="{{ 'general.close' | t }}"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-      </div>
-    {%- endif -%}
-
     <div id="PageContainer" class="page-container">
       {% section 'header' %}
 

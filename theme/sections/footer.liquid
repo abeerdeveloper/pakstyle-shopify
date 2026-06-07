@@ -1,15 +1,317 @@
-<footer class="site-footer" role="contentinfo">
-  <div class="container site-footer__inner">
-    <div>
-      <p class="site-footer__brand">{{ section.settings.brand_name | default: shop.name }}</p>
-      <p class="site-footer__tagline">{{ section.settings.tagline | default: 'general.tagline' | t }}</p>
+<footer class="ps-footer" role="contentinfo">
+  <div class="container ps-footer__grid">
+    {%- comment -%} Column 1: Brand {%- endcomment -%}
+    <div class="ps-footer__col">
+      <a href="{{ routes.root_url }}" class="ps-footer__logo">
+        {{ section.settings.brand_name | default: 'PakStyle' }}
+      </a>
+      <p class="ps-footer__tagline">
+        {{ section.settings.tagline | default: 'Bold style for the modern man' }}
+      </p>
+      <div class="ps-footer__social">
+        {%- if section.settings.instagram_url != blank -%}
+          <a href="{{ section.settings.instagram_url }}" class="ps-footer__social-link" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="2"/>
+              <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/>
+              <circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>
+            </svg>
+          </a>
+        {%- endif -%}
+        {%- if section.settings.facebook_url != blank -%}
+          <a href="{{ section.settings.facebook_url }}" class="ps-footer__social-link" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M14 8h2V5h-2c-2.21 0-4 1.79-4 4v2H8v3h2v7h3v-7h2.5l.5-3H13V9c0-.55.45-1 1-1z" fill="currentColor"/>
+            </svg>
+          </a>
+        {%- endif -%}
+        {%- if section.settings.tiktok_url != blank -%}
+          <a href="{{ section.settings.tiktok_url }}" class="ps-footer__social-link" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M16 5c.5 2.5 2 4 4.5 4.5V13c-2 0-3.8-.7-5.2-1.8v5.3c0 3.3-2.7 6-6 6s-6-2.7-6-6 2.7-6 6-6v3c-1.7 0-3 1.3-3 3s1.3 3 3 3 3-1.3 3-3V3h3c0 1.1.9 2 2 2z" fill="currentColor"/>
+            </svg>
+          </a>
+        {%- endif -%}
+      </div>
     </div>
 
-    <div class="site-footer__bottom">
-      <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. {{ section.settings.copyright_text }}</p>
+    {%- comment -%} Column 2: Quick Links {%- endcomment -%}
+    <div class="ps-footer__col">
+      <h3 class="ps-footer__heading">{{ 'footer.quick_links' | t }}</h3>
+      <ul class="ps-footer__links">
+        <li><a href="{{ routes.root_url }}">Home</a></li>
+        <li><a href="{{ routes.collections_url }}/new-arrivals">New Arrivals</a></li>
+        <li><a href="{{ routes.collections_url }}/men">Men</a></li>
+        <li><a href="{{ routes.collections_url }}/sale">Sale</a></li>
+        <li><a href="{{ routes.root_url }}pages/about">About</a></li>
+      </ul>
+    </div>
+
+    {%- comment -%} Column 3: Help {%- endcomment -%}
+    <div class="ps-footer__col">
+      <h3 class="ps-footer__heading">{{ 'footer.help' | t }}</h3>
+      <ul class="ps-footer__links">
+        <li><a href="{{ routes.root_url }}pages/contact">Contact Us</a></li>
+        <li><a href="{{ routes.root_url }}pages/size-guide">Size Guide</a></li>
+        <li><a href="{{ routes.root_url }}pages/shipping-policy">Shipping Policy</a></li>
+        <li><a href="{{ routes.root_url }}pages/returns">Returns</a></li>
+      </ul>
+    </div>
+
+    {%- comment -%} Column 4: Newsletter {%- endcomment -%}
+    <div class="ps-footer__col">
+      <h3 class="ps-footer__heading">{{ 'footer.newsletter' | t }}</h3>
+      <p class="ps-footer__newsletter-text">{{ 'footer.newsletter_text' | t }}</p>
+
+      {% form 'customer', id: 'FooterNewsletter', class: 'ps-footer__newsletter-form' %}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        <div class="ps-footer__newsletter-field">
+          <input
+            type="email"
+            name="contact[email]"
+            class="ps-footer__newsletter-input"
+            placeholder="{{ 'footer.newsletter_placeholder' | t }}"
+            required
+            autocomplete="email"
+            aria-label="{{ 'footer.newsletter_placeholder' | t }}"
+          >
+          <button type="submit" class="ps-footer__newsletter-btn">
+            {{ 'footer.subscribe' | t }}
+          </button>
+        </div>
+        {%- if form.posted_successfully? -%}
+          <p class="ps-footer__newsletter-success">{{ 'footer.newsletter_success' | t }}</p>
+        {%- endif -%}
+        {%- if form.errors -%}
+          <p class="ps-footer__newsletter-error">{{ form.errors.messages.email }}</p>
+        {%- endif -%}
+      {% endform %}
+    </div>
+  </div>
+
+  <div class="ps-footer__bottom">
+    <div class="container ps-footer__bottom-inner">
+      <p class="ps-footer__copyright">
+        &copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. {{ section.settings.copyright_text | default: 'All rights reserved.' }}
+      </p>
+      <div class="ps-footer__payments" aria-label="{{ 'footer.payment_methods' | t }}">
+        <span class="ps-footer__payment-badge" title="Visa">Visa</span>
+        <span class="ps-footer__payment-badge" title="Mastercard">Mastercard</span>
+        <span class="ps-footer__payment-badge ps-footer__payment-badge--local" title="EasyPaisa">EasyPaisa</span>
+        <span class="ps-footer__payment-badge ps-footer__payment-badge--local" title="JazzCash">JazzCash</span>
+      </div>
     </div>
   </div>
 </footer>
+
+<style>
+  .ps-footer {
+    background-color: #0F172A;
+    color: #ffffff;
+    margin-top: auto;
+  }
+
+  .ps-footer__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding: 48px 16px;
+  }
+
+  .ps-footer__logo {
+    display: inline-block;
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: #ffffff;
+    margin-bottom: 12px;
+  }
+
+  .ps-footer__tagline {
+    font-size: 0.9375rem;
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 1.6;
+    margin-bottom: 20px;
+    max-width: 280px;
+  }
+
+  .ps-footer__social {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .ps-footer__social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+
+  .ps-footer__social-link:hover {
+    background: var(--color-accent, #F97316);
+    transform: translateY(-2px);
+  }
+
+  .ps-footer__heading {
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .ps-footer__links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .ps-footer__links a {
+    font-size: 0.9375rem;
+    color: rgba(255, 255, 255, 0.7);
+    transition: color 0.2s ease;
+  }
+
+  .ps-footer__links a:hover {
+    color: var(--color-accent, #F97316);
+  }
+
+  .ps-footer__newsletter-text {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.65);
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
+  .ps-footer__newsletter-field {
+    display: flex;
+    gap: 0;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .ps-footer__newsletter-input {
+    flex: 1;
+    min-width: 0;
+    padding: 12px 16px;
+    border: none;
+    outline: none;
+    font-size: 0.875rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+  }
+
+  .ps-footer__newsletter-input::placeholder {
+    color: rgba(255, 255, 255, 0.45);
+  }
+
+  .ps-footer__newsletter-btn {
+    padding: 12px 20px;
+    background: var(--color-accent, #F97316);
+    color: #ffffff;
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: background 0.2s ease;
+  }
+
+  .ps-footer__newsletter-btn:hover {
+    background: #ea580c;
+  }
+
+  .ps-footer__newsletter-success {
+    margin-top: 8px;
+    font-size: 0.8125rem;
+    color: #4ade80;
+  }
+
+  .ps-footer__newsletter-error {
+    margin-top: 8px;
+    font-size: 0.8125rem;
+    color: #f87171;
+  }
+
+  .ps-footer__bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 20px 0;
+  }
+
+  .ps-footer__bottom-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    text-align: center;
+  }
+
+  .ps-footer__copyright {
+    font-size: 0.8125rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0;
+  }
+
+  .ps-footer__payments {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .ps-footer__payment-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: rgba(255, 255, 255, 0.85);
+    text-transform: uppercase;
+  }
+
+  .ps-footer__payment-badge--local {
+    background: rgba(249, 115, 22, 0.2);
+    color: var(--color-accent, #F97316);
+  }
+
+  @media screen and (min-width: 768px) {
+    .ps-footer__grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px 24px;
+      padding: 56px 16px;
+    }
+  }
+
+  @media screen and (min-width: 1024px) {
+    .ps-footer__grid {
+      grid-template-columns: 1.4fr 1fr 1fr 1.4fr;
+      gap: 32px;
+      padding: 64px 16px;
+    }
+
+    .ps-footer__bottom-inner {
+      flex-direction: row;
+      justify-content: space-between;
+      text-align: left;
+    }
+  }
+</style>
 
 {% schema %}
 {
@@ -32,6 +334,25 @@
       "id": "copyright_text",
       "label": "Copyright text",
       "default": "All rights reserved."
+    },
+    {
+      "type": "header",
+      "content": "Social media"
+    },
+    {
+      "type": "url",
+      "id": "instagram_url",
+      "label": "Instagram URL"
+    },
+    {
+      "type": "url",
+      "id": "facebook_url",
+      "label": "Facebook URL"
+    },
+    {
+      "type": "url",
+      "id": "tiktok_url",
+      "label": "TikTok URL"
     }
   ]
 }

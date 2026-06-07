@@ -1,46 +1,560 @@
-<div class="cart-drawer" data-cart-drawer aria-hidden="true">
-  <div class="cart-drawer__overlay" data-cart-close aria-hidden="true"></div>
+{%- assign free_shipping_threshold = section.settings.free_shipping_threshold | default: 250000 -%}
+
+<div class="ps-cart-drawer" data-cart-drawer aria-hidden="true">
+  <div class="ps-cart-drawer__overlay" data-cart-close></div>
 
   <aside
-    class="cart-drawer__panel"
+    class="ps-cart-drawer__panel"
     role="dialog"
     aria-modal="true"
     aria-label="{{ 'cart.title' | t }}"
   >
-    <div class="flex-between" style="padding: var(--spacing-md); border-bottom: 1px solid var(--color-border);">
-      <h2 style="font-size: var(--font-size-xl); margin: 0;">{{ 'cart.title' | t }}</h2>
+    <div class="ps-cart-drawer__header">
+      <h2 class="ps-cart-drawer__title" data-cart-drawer-title>
+        {{ 'cart.title_with_count' | t: count: cart.item_count }}
+      </h2>
       <button
         type="button"
-        class="btn-ghost btn"
+        class="ps-cart-drawer__close"
         data-cart-close
         aria-label="{{ 'general.close' | t }}"
       >
-        &times;
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
       </button>
     </div>
 
-    <div style="flex: 1; overflow-y: auto; padding: var(--spacing-md);" data-cart-items>
-      <p class="text-light text-center">{{ 'cart.empty' | t }}</p>
+    <div class="ps-cart-drawer__body">
+      <div class="ps-cart-drawer__empty" data-cart-empty {% if cart.item_count > 0 %}hidden{% endif %}>
+        <div class="ps-cart-drawer__empty-icon" aria-hidden="true">
+          <svg width="80" height="80" viewBox="0 0 24 24" fill="none">
+            <path d="M6 6h15l-1.5 9h-12L6 6z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+            <circle cx="10" cy="20" r="1.5" fill="currentColor"/>
+            <circle cx="18" cy="20" r="1.5" fill="currentColor"/>
+          </svg>
+        </div>
+        <p class="ps-cart-drawer__empty-text">{{ 'cart.empty' | t }}</p>
+        <button type="button" class="btn btn-primary ps-cart-drawer__empty-btn" data-cart-close>
+          {{ 'cart.start_shopping' | t }}
+        </button>
+      </div>
+
+      <ul class="ps-cart-drawer__items" data-cart-items {% if cart.item_count == 0 %}hidden{% endif %}></ul>
     </div>
 
-    <div style="padding: var(--spacing-md); border-top: 1px solid var(--color-border);">
-      <div class="flex-between" style="margin-bottom: var(--spacing-sm);">
+    <div class="ps-cart-drawer__footer" data-cart-footer {% if cart.item_count == 0 %}hidden{% endif %}>
+      <div class="ps-cart-drawer__shipping" data-cart-shipping>
+        <p class="ps-cart-drawer__shipping-text" data-cart-shipping-text></p>
+        <div class="ps-cart-drawer__progress">
+          <div class="ps-cart-drawer__progress-bar" data-cart-shipping-bar style="width: 0%"></div>
+        </div>
+      </div>
+
+      <div class="ps-cart-drawer__subtotal">
         <span>{{ 'cart.subtotal' | t }}</span>
         <strong data-cart-subtotal>{{ cart.total_price | money }}</strong>
       </div>
-      <a href="{{ routes.cart_url }}" class="btn btn-secondary" style="width: 100%; margin-bottom: var(--spacing-xs);">
-        {{ 'cart.view_cart' | t }}
-      </a>
-      <a href="{{ routes.cart_url }}" class="btn btn-primary" style="width: 100%;">
-        {{ 'cart.checkout' | t }}
-      </a>
+
+      <form action="{{ routes.cart_url }}" method="post">
+        <button type="submit" name="checkout" class="btn btn-primary ps-cart-drawer__checkout">
+          {{ 'cart.checkout' | t }}
+        </button>
+      </form>
+
+      <button type="button" class="ps-cart-drawer__continue" data-cart-close>
+        {{ 'general.continue_shopping' | t }}
+      </button>
     </div>
   </aside>
 </div>
 
+<style>
+  .ps-cart-drawer {
+    visibility: hidden;
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1300;
+  }
+
+  .ps-cart-drawer.is-open {
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .ps-cart-drawer__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.6);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .ps-cart-drawer.is-open .ps-cart-drawer__overlay {
+    opacity: 1;
+  }
+
+  .ps-cart-drawer__panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    max-width: 420px;
+    height: 100%;
+    background: var(--color-background, #fff);
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    box-shadow: var(--shadow-lg, 0 10px 25px rgba(0,0,0,0.15));
+  }
+
+  .ps-cart-drawer.is-open .ps-cart-drawer__panel {
+    transform: translateX(0);
+  }
+
+  .ps-cart-drawer__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--color-border, #E5E7EB);
+    flex-shrink: 0;
+  }
+
+  .ps-cart-drawer__title {
+    margin: 0;
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-primary, #0F172A);
+  }
+
+  .ps-cart-drawer__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    color: var(--color-primary, #0F172A);
+    transition: background 0.2s ease;
+  }
+
+  .ps-cart-drawer__close:hover {
+    background: rgba(15, 23, 42, 0.06);
+  }
+
+  .ps-cart-drawer__body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 24px;
+  }
+
+  .ps-cart-drawer__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 48px 16px;
+    min-height: 300px;
+  }
+
+  .ps-cart-drawer__empty[hidden] {
+    display: none;
+  }
+
+  .ps-cart-drawer__empty-icon {
+    color: var(--color-text-light, #6B7280);
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+
+  .ps-cart-drawer__empty-text {
+    font-size: 1rem;
+    color: var(--color-text-light, #6B7280);
+    margin-bottom: 24px;
+  }
+
+  .ps-cart-drawer__empty-btn {
+    min-width: 200px;
+  }
+
+  .ps-cart-drawer__items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .ps-cart-drawer__items[hidden] {
+    display: none;
+  }
+
+  .ps-cart-drawer__item {
+    display: grid;
+    grid-template-columns: 60px 1fr auto;
+    gap: 12px;
+    align-items: start;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--color-border, #E5E7EB);
+  }
+
+  .ps-cart-drawer__item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .ps-cart-drawer__item-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 6px;
+    background: var(--color-border, #E5E7EB);
+  }
+
+  .ps-cart-drawer__item-details {
+    min-width: 0;
+  }
+
+  .ps-cart-drawer__item-title {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--color-primary, #0F172A);
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+
+  .ps-cart-drawer__item-title a {
+    color: inherit;
+  }
+
+  .ps-cart-drawer__item-variant {
+    font-size: 0.75rem;
+    color: var(--color-text-light, #6B7280);
+    margin-bottom: 6px;
+  }
+
+  .ps-cart-drawer__item-price {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-accent, #F97316);
+  }
+
+  .ps-cart-drawer__item-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+  }
+
+  .ps-cart-drawer__item-remove {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    color: var(--color-text-light, #6B7280);
+    font-size: 1.125rem;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  .ps-cart-drawer__item-remove:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+  }
+
+  .ps-cart-drawer__qty {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--color-border, #E5E7EB);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .ps-cart-drawer__qty-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-primary, #0F172A);
+    transition: background 0.2s ease;
+  }
+
+  .ps-cart-drawer__qty-btn:hover {
+    background: rgba(15, 23, 42, 0.06);
+  }
+
+  .ps-cart-drawer__qty-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .ps-cart-drawer__qty-value {
+    min-width: 28px;
+    text-align: center;
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+
+  .ps-cart-drawer__footer {
+    padding: 20px 24px;
+    border-top: 1px solid var(--color-border, #E5E7EB);
+    flex-shrink: 0;
+  }
+
+  .ps-cart-drawer__footer[hidden] {
+    display: none;
+  }
+
+  .ps-cart-drawer__shipping {
+    margin-bottom: 16px;
+  }
+
+  .ps-cart-drawer__shipping-text {
+    font-size: 0.8125rem;
+    color: var(--color-text-light, #6B7280);
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+
+  .ps-cart-drawer__shipping-text strong {
+    color: var(--color-primary, #0F172A);
+  }
+
+  .ps-cart-drawer__progress {
+    height: 6px;
+    background: var(--color-border, #E5E7EB);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .ps-cart-drawer__progress-bar {
+    height: 100%;
+    background: var(--color-accent, #F97316);
+    border-radius: 999px;
+    transition: width 0.4s ease;
+    min-width: 0;
+  }
+
+  .ps-cart-drawer__subtotal {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    font-size: 1rem;
+  }
+
+  .ps-cart-drawer__subtotal strong {
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+    font-size: 1.125rem;
+    color: var(--color-primary, #0F172A);
+  }
+
+  .ps-cart-drawer__checkout {
+    width: 100%;
+    margin-bottom: 12px;
+  }
+
+  .ps-cart-drawer__continue {
+    display: block;
+    width: 100%;
+    text-align: center;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-light, #6B7280);
+    padding: 8px;
+    transition: color 0.2s ease;
+  }
+
+  .ps-cart-drawer__continue:hover {
+    color: var(--color-accent, #F97316);
+  }
+
+  .ps-cart-drawer__loading {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+</style>
+
+<script>
+  (function () {
+    'use strict';
+
+    var FREE_SHIPPING_THRESHOLD = {{ free_shipping_threshold }};
+    var drawer = document.querySelector('[data-cart-drawer]');
+    if (!drawer) return;
+
+    var itemsEl = drawer.querySelector('[data-cart-items]');
+    var emptyEl = drawer.querySelector('[data-cart-empty]');
+    var footerEl = drawer.querySelector('[data-cart-footer]');
+    var titleEl = drawer.querySelector('[data-cart-drawer-title]');
+    var subtotalEl = drawer.querySelector('[data-cart-subtotal]');
+    var shippingTextEl = drawer.querySelector('[data-cart-shipping-text]');
+    var shippingBarEl = drawer.querySelector('[data-cart-shipping-bar]');
+
+    function formatMoney(cents) {
+      if (window.PakStyle && window.PakStyle.formatMoney) {
+        return window.PakStyle.formatMoney(cents);
+      }
+      return 'PKR ' + (cents / 100).toFixed(2);
+    }
+
+    function escapeHtml(str) {
+      var div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function updateShippingProgress(totalCents) {
+      if (!shippingTextEl || !shippingBarEl) return;
+
+      var remaining = FREE_SHIPPING_THRESHOLD - totalCents;
+      var progress = Math.min(100, (totalCents / FREE_SHIPPING_THRESHOLD) * 100);
+
+      shippingBarEl.style.width = progress + '%';
+
+      if (remaining <= 0) {
+        shippingTextEl.innerHTML = '🎉 <strong>You qualify for free shipping!</strong>';
+      } else {
+        shippingTextEl.innerHTML = 'You are <strong>' + formatMoney(remaining) + '</strong> away from free shipping!';
+      }
+    }
+
+    function renderCartItem(item) {
+      var variantTitle = item.variant_title && item.variant_title !== 'Default Title'
+        ? item.variant_title
+        : '';
+
+      return '<li class="ps-cart-drawer__item" data-line-key="' + escapeHtml(item.key) + '">' +
+        '<a href="' + escapeHtml(item.url) + '">' +
+        '<img src="' + escapeHtml(item.image || '') + '" alt="" class="ps-cart-drawer__item-img" width="60" height="60" loading="lazy">' +
+        '</a>' +
+        '<div class="ps-cart-drawer__item-details">' +
+        '<p class="ps-cart-drawer__item-title"><a href="' + escapeHtml(item.url) + '">' + escapeHtml(item.product_title) + '</a></p>' +
+        (variantTitle ? '<p class="ps-cart-drawer__item-variant">' + escapeHtml(variantTitle) + '</p>' : '') +
+        '<p class="ps-cart-drawer__item-price">' + formatMoney(item.final_line_price) + '</p>' +
+        '</div>' +
+        '<div class="ps-cart-drawer__item-actions">' +
+        '<button type="button" class="ps-cart-drawer__item-remove" data-cart-remove="' + escapeHtml(item.key) + '" aria-label="Remove">&times;</button>' +
+        '<div class="ps-cart-drawer__qty">' +
+        '<button type="button" class="ps-cart-drawer__qty-btn" data-cart-qty-minus="' + escapeHtml(item.key) + '" aria-label="Decrease quantity">&minus;</button>' +
+        '<span class="ps-cart-drawer__qty-value">' + item.quantity + '</span>' +
+        '<button type="button" class="ps-cart-drawer__qty-btn" data-cart-qty-plus="' + escapeHtml(item.key) + '" aria-label="Increase quantity">+</button>' +
+        '</div>' +
+        '</div>' +
+        '</li>';
+    }
+
+    function renderCart(cart) {
+      var hasItems = cart.item_count > 0;
+
+      if (titleEl) {
+        titleEl.textContent = 'Your Cart (' + cart.item_count + ' item' + (cart.item_count === 1 ? '' : 's') + ')';
+      }
+
+      if (subtotalEl) {
+        subtotalEl.textContent = formatMoney(cart.total_price);
+      }
+
+      if (emptyEl) emptyEl.hidden = hasItems;
+      if (itemsEl) {
+        itemsEl.hidden = !hasItems;
+        itemsEl.innerHTML = hasItems
+          ? cart.items.map(renderCartItem).join('')
+          : '';
+      }
+      if (footerEl) footerEl.hidden = !hasItems;
+
+      updateShippingProgress(cart.total_price);
+      bindItemEvents();
+    }
+
+    function bindItemEvents() {
+      if (!itemsEl) return;
+
+      itemsEl.querySelectorAll('[data-cart-remove]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var key = btn.getAttribute('data-cart-remove');
+          updateQuantity(key, 0);
+        });
+      });
+
+      itemsEl.querySelectorAll('[data-cart-qty-minus]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var key = btn.getAttribute('data-cart-qty-minus');
+          var item = findItemByKey(key);
+          if (item) updateQuantity(key, item.quantity - 1);
+        });
+      });
+
+      itemsEl.querySelectorAll('[data-cart-qty-plus]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var key = btn.getAttribute('data-cart-qty-plus');
+          var item = findItemByKey(key);
+          if (item) updateQuantity(key, item.quantity + 1);
+        });
+      });
+    }
+
+    function findItemByKey(key) {
+      if (!window.PakStyle || !window.PakStyle.cartState) return null;
+      return window.PakStyle.cartState.items.find(function (item) {
+        return item.key === key;
+      });
+    }
+
+    function updateQuantity(key, quantity) {
+      if (!window.PakStyle || !window.PakStyle.updateCartItem) return;
+
+      drawer.classList.add('ps-cart-drawer__loading');
+
+      window.PakStyle.updateCartItem(key, quantity)
+        .then(function (cart) {
+          renderCart(cart);
+        })
+        .finally(function () {
+          drawer.classList.remove('ps-cart-drawer__loading');
+        });
+    }
+
+    document.addEventListener('pakstyle:cart:updated', function (e) {
+      if (e.detail && e.detail.cart) {
+        renderCart(e.detail.cart);
+      }
+    });
+
+    document.addEventListener('pakstyle:cart:drawer', function (e) {
+      if (e.detail && e.detail.isOpen && window.PakStyle) {
+        window.PakStyle.fetchCart();
+      }
+    });
+
+    if (window.PakStyle && window.PakStyle.cartState && window.PakStyle.cartState.items.length) {
+      renderCart(window.PakStyle.cartState);
+    }
+  })();
+</script>
+
 {% schema %}
 {
   "name": "Cart drawer",
-  "settings": []
+  "settings": [
+    {
+      "type": "number",
+      "id": "free_shipping_threshold",
+      "label": "Free shipping threshold (in cents)",
+      "default": 250000,
+      "info": "PKR 2,500 = 250000 cents"
+    }
+  ]
 }
 {% endschema %}

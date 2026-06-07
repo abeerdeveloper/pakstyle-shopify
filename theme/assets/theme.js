@@ -359,6 +359,10 @@
     document.dispatchEvent(
       new CustomEvent('pakstyle:cart:drawer', { detail: { isOpen: isOpen } })
     );
+
+    if (isOpen) {
+      fetchCart();
+    }
   }
 
   /**
@@ -372,7 +376,6 @@
       trigger.addEventListener('click', function (event) {
         event.preventDefault();
         toggleCartDrawer(true);
-        fetchCart();
       });
     });
 
@@ -389,9 +392,6 @@
 
   function init() {
     initSkipLink();
-    initAnnouncementBar();
-    initMobileMenu();
-    initStickyHeader();
     initCartDrawer();
     fetchCart();
   }
