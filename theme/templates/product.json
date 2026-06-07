@@ -1,0 +1,16 @@
+{
+  "sections": {
+    "main": {
+      "type": "product-form",
+      "settings": {
+        "enable_sticky_bar": true,
+        "enable_recently_viewed": true,
+        "enable_related_products": true,
+        "related_products_count": "4"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

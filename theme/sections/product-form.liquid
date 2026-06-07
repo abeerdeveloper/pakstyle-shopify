@@ -1,0 +1,1004 @@
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign bc_collection = collection | default: product.collections.first
+  assign on_sale = false
+  assign save_percent = 0
+  if current_variant.compare_at_price > current_variant.price
+    assign on_sale = true
+    assign save_percent = current_variant.compare_at_price | minus: current_variant.price | times: 100 | divided_by: current_variant.compare_at_price
+  endif
+  assign short_desc = product.description | strip_html | truncate: 150
+  assign media_count = product.media.size
+  if media_count == 0 and product.featured_image
+    assign media_count = 1
+  endif
+  assign related_limit = section.settings.related_products_count | plus: 0
+  assign low_stock_threshold = 5
+-%}
+
+<section
+  id="shopify-section-{{ section.id }}"
+  class="ps-pdp"
+  data-ps-pdp
+  data-product-id="{{ product.id }}"
+  data-enable-sticky="{{ section.settings.enable_sticky_bar }}"
+  data-enable-recent="{{ section.settings.enable_recently_viewed }}"
+>
+  <div class="container ps-pdp__main">
+    <div class="ps-pdp__grid">
+      {%- comment -%} LEFT — Gallery {%- endcomment -%}
+      <div class="ps-pdp__gallery" data-ps-gallery>
+        <div class="ps-pdp__thumbs" data-ps-thumbs>
+          {%- if product.media.size > 0 -%}
+            {%- for media in product.media -%}
+              <button
+                type="button"
+                class="ps-pdp__thumb{% if forloop.first %} is-active{% endif %}"
+                data-ps-thumb
+                data-media-index="{{ forloop.index0 }}"
+                data-media-type="{{ media.media_type }}"
+                aria-label="View image {{ forloop.index }}"
+              >
+                {%- if media.media_type == 'video' -%}
+                  {{ media.preview_image | image_url: width: 120 | image_tag: loading: 'lazy', alt: product.title }}
+                  <span class="ps-pdp__thumb-play" aria-hidden="true">▶</span>
+                {%- else -%}
+                  {{ media | image_url: width: 120 | image_tag: loading: 'lazy', alt: media.alt | default: product.title }}
+                {%- endif -%}
+              </button>
+            {%- endfor -%}
+          {%- elsif product.featured_image -%}
+            <button type="button" class="ps-pdp__thumb is-active" data-ps-thumb data-media-index="0" data-media-type="image">
+              {{ product.featured_image | image_url: width: 120 | image_tag: loading: 'lazy', alt: product.title }}
+            </button>
+          {%- endif -%}
+        </div>
+
+        <div class="ps-pdp__main-media" data-ps-main-media>
+          <div class="ps-pdp__media-track" data-ps-media-track>
+            {%- if product.media.size > 0 -%}
+              {%- for media in product.media -%}
+                <div class="ps-pdp__media-slide{% if forloop.first %} is-active{% endif %}" data-ps-media-slide data-index="{{ forloop.index0 }}">
+                  {%- if media.media_type == 'video' -%}
+                    <div class="ps-pdp__video-wrap">
+                      {{ media | video_tag: class: 'ps-pdp__video', controls: true, autoplay: false, loop: true, muted: true, image_size: '800x' }}
+                    </div>
+                  {%- else -%}
+                    <div class="ps-pdp__zoom-wrap" data-ps-zoom>
+                      {{ media | image_url: width: 1200 | image_tag: class: 'ps-pdp__main-img', loading: 'eager', widths: '600, 800, 1000, 1200', sizes: '(max-width: 767px) 100vw, 50vw', alt: media.alt | default: product.title }}
+                    </div>
+                  {%- endif -%}
+                </div>
+              {%- endfor -%}
+            {%- elsif product.featured_image -%}
+              <div class="ps-pdp__media-slide is-active" data-ps-media-slide data-index="0">
+                <div class="ps-pdp__zoom-wrap" data-ps-zoom>
+                  {{ product.featured_image | image_url: width: 1200 | image_tag: class: 'ps-pdp__main-img', loading: 'eager', alt: product.title }}
+                </div>
+              </div>
+            {%- else -%}
+              <div class="ps-pdp__media-slide is-active" data-ps-media-slide>
+                <div class="ps-pdp__placeholder"></div>
+              </div>
+            {%- endif -%}
+          </div>
+          <span class="ps-pdp__counter" data-ps-counter>1 / {{ media_count }}</span>
+        </div>
+      </div>
+
+      {%- comment -%} RIGHT — Product info {%- endcomment -%}
+      <div class="ps-pdp__info">
+        <nav class="ps-pdp__breadcrumb" aria-label="Breadcrumb">
+          <a href="{{ routes.root_url }}">Home</a>
+          <span aria-hidden="true">›</span>
+          <a href="{{ routes.collections_url }}/men">Men</a>
+          {%- if bc_collection -%}
+            <span aria-hidden="true">›</span>
+            <a href="{{ bc_collection.url }}">{{ bc_collection.title }}</a>
+          {%- endif -%}
+          <span aria-hidden="true">›</span>
+          <span aria-current="page">{{ product.title }}</span>
+        </nav>
+
+        {%- if product.vendor != blank -%}
+          <p class="ps-pdp__vendor">{{ product.vendor }}</p>
+        {%- endif -%}
+
+        <h1 class="ps-pdp__title">{{ product.title }}</h1>
+
+        <div class="ps-pdp__rating-row">
+          <div class="ps-pdp__stars" aria-label="4.5 out of 5 stars">
+            {%- for i in (1..4) -%}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#f59e0b" aria-hidden="true"><path d="M12 2l2.9 6.9L22 10l-5.2 4.5L18.2 22 12 18.5 5.8 22l1.4-7.5L2 10l7.1-1.1L12 2z"/></svg>
+            {%- endfor -%}
+            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="half-{{ section.id }}"><stop offset="50%" stop-color="#f59e0b"/><stop offset="50%" stop-color="#e5e7eb"/></linearGradient></defs><path d="M12 2l2.9 6.9L22 10l-5.2 4.5L18.2 22 12 18.5 5.8 22l1.4-7.5L2 10l7.1-1.1L12 2z" fill="url(#half-{{ section.id }})"/></svg>
+          </div>
+          <span class="ps-pdp__rating-text">4.5 — 24 reviews</span>
+        </div>
+
+        <div class="ps-pdp__price-block" data-ps-price-block>
+          {%- if on_sale -%}
+            <span class="ps-pdp__price ps-pdp__price--sale" data-ps-price>{{ current_variant.price | money }}</span>
+            <s class="ps-pdp__compare" data-ps-compare>{{ current_variant.compare_at_price | money }}</s>
+            <span class="ps-pdp__save-badge" data-ps-save-badge>SAVE {{ save_percent }}%</span>
+          {%- else -%}
+            <span class="ps-pdp__price" data-ps-price>{{ current_variant.price | money }}</span>
+            <s class="ps-pdp__compare" data-ps-compare hidden></s>
+            <span class="ps-pdp__save-badge" data-ps-save-badge hidden></span>
+          {%- endif -%}
+        </div>
+
+        {%- if short_desc != blank -%}
+          <p class="ps-pdp__short-desc">{{ short_desc }}</p>
+        {%- endif -%}
+
+        {% form 'product', product, id: 'ProductForm', class: 'ps-pdp__form', data-ps-product-form: '' %}
+          <input type="hidden" name="id" value="{{ current_variant.id }}" data-ps-variant-input>
+
+          {%- unless product.has_only_default_variant -%}
+            {%- for option in product.options_with_values -%}
+              {%- assign opt_down = option.name | downcase -%}
+              <div class="ps-pdp__option" data-option-index="{{ forloop.index0 }}" data-option-name="{{ option.name }}">
+                <label class="ps-pdp__option-label">{{ option.name }}</label>
+                {%- if opt_down == 'color' or opt_down == 'colour' -%}
+                  <div class="ps-pdp__swatches" data-ps-option-swatches>
+                    {%- for value in option.values -%}
+                      <button
+                        type="button"
+                        class="ps-pdp__swatch{% if option.selected_value == value %} is-selected{% endif %}"
+                        data-option-value="{{ value | escape }}"
+                        data-color-swatch
+                        title="{{ value }}"
+                        style="--swatch-color: {{ value | handle | replace: 'navy-blue', '#1e3a5f' | replace: 'black', '#000' | replace: 'white', '#fff' }}"
+                      >
+                        <span class="ps-pdp__swatch-inner" data-swatch-name="{{ value | handle }}"></span>
+                      </button>
+                    {%- endfor -%}
+                  </div>
+                {%- else -%}
+                  <div class="ps-pdp__size-btns" data-ps-option-buttons>
+                    {%- for value in option.values -%}
+                      <button
+                        type="button"
+                        class="ps-pdp__size-btn{% if option.selected_value == value %} is-selected{% endif %}"
+                        data-option-value="{{ value | escape }}"
+                      >
+                        {{ value }}
+                        <span class="ps-pdp__size-unavail" aria-hidden="true">✕</span>
+                      </button>
+                    {%- endfor -%}
+                  </div>
+                {%- endif -%}
+              </div>
+            {%- endfor -%}
+          {%- endunless -%}
+
+          <p class="ps-pdp__selected-options" data-ps-selected-options></p>
+
+          <div class="ps-pdp__stock" data-ps-stock>
+            {%- if current_variant.available -%}
+              {%- if current_variant.inventory_management and current_variant.inventory_quantity > 0 and current_variant.inventory_quantity <= low_stock_threshold -%}
+                <span class="ps-pdp__stock-dot ps-pdp__stock-dot--yellow"></span>
+                <span data-ps-stock-text>Only {{ current_variant.inventory_quantity }} left!</span>
+              {%- else -%}
+                <span class="ps-pdp__stock-dot ps-pdp__stock-dot--green"></span>
+                <span data-ps-stock-text>In Stock — Ships within 24 hours</span>
+              {%- endif -%}
+            {%- else -%}
+              <span class="ps-pdp__stock-dot ps-pdp__stock-dot--red"></span>
+              <span data-ps-stock-text>Out of Stock</span>
+            {%- endif -%}
+          </div>
+
+          <div class="ps-pdp__qty-row">
+            <label class="ps-pdp__option-label" for="Quantity-{{ section.id }}">{{ 'products.quantity' | t }}</label>
+            <div class="ps-pdp__qty">
+              <button type="button" class="ps-pdp__qty-btn" data-ps-qty-minus aria-label="Decrease quantity">−</button>
+              <input type="number" id="Quantity-{{ section.id }}" name="quantity" value="1" min="1" class="ps-pdp__qty-input" data-ps-qty-input>
+              <button type="button" class="ps-pdp__qty-btn" data-ps-qty-plus aria-label="Increase quantity">+</button>
+            </div>
+          </div>
+
+          <div class="ps-pdp__actions" data-ps-main-atc-wrap>
+            <button
+              type="button"
+              class="btn btn-primary ps-pdp__atc"
+              data-ps-add-to-cart
+              {% unless current_variant.available %}disabled{% endunless %}
+            >
+              <span class="ps-pdp__atc-text" data-ps-atc-text>{% if current_variant.available %}{{ 'products.add_to_cart' | t }}{% else %}{{ 'products.sold_out' | t }}{% endif %}</span>
+              <span class="ps-pdp__atc-spinner" data-ps-atc-spinner hidden><svg width="20" height="20" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none" stroke-dasharray="31.4"><animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="0.8s" repeatCount="indefinite"/></circle></svg></span>
+              <span class="ps-pdp__atc-success" data-ps-atc-success hidden>✓ Added to Cart</span>
+            </button>
+            <button type="button" class="btn btn-secondary ps-pdp__buy-now" data-ps-buy-now {% unless current_variant.available %}disabled{% endunless %}>
+              {{ 'products.buy_now' | t }}
+            </button>
+            <button type="button" class="ps-pdp__wishlist-btn" data-ps-wishlist-btn data-product-id="{{ product.id }}">
+              <span data-ps-wishlist-icon>♡</span> {{ 'products.add_to_wishlist' | t }}
+            </button>
+          </div>
+        {% endform %}
+
+        <div class="ps-pdp__mini-trust">
+          <span>🚚 Free Shipping</span>
+          <span>↩️ Easy Returns</span>
+          <span>🔒 Secure Payment</span>
+        </div>
+
+        <div class="ps-pdp__share">
+          <span class="ps-pdp__share-label">{{ 'products.share' | t }}:</span>
+          <a href="https://wa.me/?text={{ product.title | url_encode }}%20{{ shop.url | append: product.url | url_encode }}" class="ps-pdp__share-btn" target="_blank" rel="noopener" aria-label="Share on WhatsApp">WhatsApp</a>
+          <a href="https://www.facebook.com/sharer/sharer.php?u={{ shop.url | append: product.url | url_encode }}" class="ps-pdp__share-btn" target="_blank" rel="noopener" aria-label="Share on Facebook">Facebook</a>
+          <button type="button" class="ps-pdp__share-btn" data-ps-copy-link>{{ 'products.copy_link' | t }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {%- comment -%} Tabs {%- endcomment -%}
+  <div class="container ps-pdp__tabs-wrap">
+    <div class="ps-pdp__tabs" data-ps-tabs>
+      <div class="ps-pdp__tab-list" role="tablist">
+        <button type="button" class="ps-pdp__tab is-active" role="tab" aria-selected="true" data-ps-tab="description">{{ 'products.tab_description' | t }}</button>
+        <button type="button" class="ps-pdp__tab" role="tab" aria-selected="false" data-ps-tab="size-guide">{{ 'products.tab_size_guide' | t }}</button>
+        <button type="button" class="ps-pdp__tab" role="tab" aria-selected="false" data-ps-tab="shipping">{{ 'products.tab_shipping' | t }}</button>
+        <button type="button" class="ps-pdp__tab" role="tab" aria-selected="false" data-ps-tab="reviews">{{ 'products.tab_reviews' | t }}</button>
+      </div>
+
+      <div class="ps-pdp__tab-panel is-active" data-ps-tab-panel="description" role="tabpanel">
+        <div class="rte">{{ product.description }}</div>
+      </div>
+
+      <div class="ps-pdp__tab-panel" data-ps-tab-panel="size-guide" role="tabpanel" hidden>
+        <table class="ps-pdp__size-table">
+          <thead>
+            <tr><th>Size</th><th>Chest (in)</th><th>Waist (in)</th><th>Length (in)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>S</td><td>36</td><td>30</td><td>28</td></tr>
+            <tr><td>M</td><td>38</td><td>32</td><td>29</td></tr>
+            <tr><td>L</td><td>40</td><td>34</td><td>30</td></tr>
+            <tr><td>XL</td><td>42</td><td>36</td><td>31</td></tr>
+            <tr><td>XXL</td><td>44</td><td>38</td><td>32</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ps-pdp__tab-panel" data-ps-tab-panel="shipping" role="tabpanel" hidden>
+        <div class="ps-pdp__shipping-text">
+          <p>Free shipping on orders above PKR 2,500.</p>
+          <p>Standard delivery: 3-5 business days.</p>
+          <p>Express delivery: 1-2 business days (PKR 200 extra).</p>
+          <p>Easy 7-day returns on unused items.</p>
+        </div>
+      </div>
+
+      <div class="ps-pdp__tab-panel" data-ps-tab-panel="reviews" role="tabpanel" hidden>
+        <div class="ps-pdp__reviews-summary">
+          <div class="ps-pdp__reviews-avg">
+            <span class="ps-pdp__reviews-score">4.5</span>
+            <div class="ps-pdp__stars">
+              {%- for i in (1..4) -%}<svg width="20" height="20" viewBox="0 0 24 24" fill="#f59e0b"><path d="M12 2l2.9 6.9L22 10l-5.2 4.5L18.2 22 12 18.5 5.8 22l1.4-7.5L2 10l7.1-1.1L12 2z"/></svg>{%- endfor -%}
+              <svg width="20" height="20" viewBox="0 0 24 24"><defs><linearGradient id="half-rev-{{ section.id }}"><stop offset="50%" stop-color="#f59e0b"/><stop offset="50%" stop-color="#e5e7eb"/></linearGradient></defs><path d="M12 2l2.9 6.9L22 10l-5.2 4.5L18.2 22 12 18.5 5.8 22l1.4-7.5L2 10l7.1-1.1L12 2z" fill="url(#half-rev-{{ section.id }})"/></svg>
+            </div>
+            <span>24 reviews</span>
+          </div>
+          <div class="ps-pdp__reviews-bars">
+            <div class="ps-pdp__bar-row"><span>5★</span><div class="ps-pdp__bar"><div style="width:60%"></div></div><span>60%</span></div>
+            <div class="ps-pdp__bar-row"><span>4★</span><div class="ps-pdp__bar"><div style="width:25%"></div></div><span>25%</span></div>
+            <div class="ps-pdp__bar-row"><span>3★</span><div class="ps-pdp__bar"><div style="width:10%"></div></div><span>10%</span></div>
+            <div class="ps-pdp__bar-row"><span>2★</span><div class="ps-pdp__bar"><div style="width:3%"></div></div><span>3%</span></div>
+            <div class="ps-pdp__bar-row"><span>1★</span><div class="ps-pdp__bar"><div style="width:2%"></div></div><span>2%</span></div>
+          </div>
+        </div>
+        <div class="ps-pdp__review-list">
+          <article class="ps-pdp__review">
+            <div class="ps-pdp__review-meta"><strong>Ahmed K.</strong> · Jan 12, 2026 · ★★★★★</div>
+            <p>Excellent quality and perfect fit. The fabric feels premium and washes well.</p>
+          </article>
+          <article class="ps-pdp__review">
+            <div class="ps-pdp__review-meta"><strong>Usman T.</strong> · Dec 28, 2025 · ★★★★☆</div>
+            <p>Great shirt, delivery was fast. Slightly larger than expected but still love it.</p>
+          </article>
+          <article class="ps-pdp__review">
+            <div class="ps-pdp__review-meta"><strong>Bilal M.</strong> · Dec 15, 2025 · ★★★★★</div>
+            <p>Best purchase this season. Will definitely order more from PakStyle.</p>
+          </article>
+        </div>
+        <button type="button" class="btn btn-secondary ps-pdp__write-review">{{ 'products.write_review' | t }}</button>
+      </div>
+    </div>
+  </div>
+
+  {%- if section.settings.enable_related_products and bc_collection -%}
+    <div class="container ps-pdp__related">
+      <h2 class="ps-pdp__section-title">{{ 'products.related_title' | t }}</h2>
+      <div class="ps-pdp__cards-grid ps-pdp__cards-grid--{{ related_limit }}">
+        {%- assign related_count = 0 -%}
+        {%- for related in bc_collection.products -%}
+          {%- if related.id != product.id -%}
+            {% render 'product-card', card_product: related %}
+            {%- assign related_count = related_count | plus: 1 -%}
+            {%- if related_count >= related_limit -%}
+              {%- break -%}
+            {%- endif -%}
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- if section.settings.enable_recently_viewed -%}
+    <div class="container ps-pdp__recent" data-ps-recent-section hidden>
+      <h2 class="ps-pdp__section-title">{{ 'products.recently_viewed' | t }}</h2>
+      <div class="ps-pdp__cards-grid ps-pdp__cards-grid--4" data-ps-recent-grid></div>
+    </div>
+  {%- endif -%}
+
+  {%- if section.settings.enable_sticky_bar -%}
+    <div class="ps-pdp__sticky" data-ps-sticky-bar hidden>
+      <div class="ps-pdp__sticky-inner">
+        <div class="ps-pdp__sticky-info">
+          <p class="ps-pdp__sticky-title">{{ product.title | truncate: 30 }}</p>
+          <p class="ps-pdp__sticky-price" data-ps-sticky-price>{{ current_variant.price | money }}</p>
+        </div>
+        <button type="button" class="btn btn-primary ps-pdp__sticky-atc" data-ps-sticky-atc {% unless current_variant.available %}disabled{% endunless %}>
+          {{ 'products.add_to_cart' | t }}
+        </button>
+      </div>
+    </div>
+  {%- endif -%}
+
+  <div class="ps-quick-add-modal" data-ps-quick-add-modal hidden>
+    <div class="ps-quick-add-modal__backdrop" data-ps-quick-add-close></div>
+    <div class="ps-quick-add-modal__panel" role="dialog" aria-modal="true">
+      <div class="ps-quick-add-modal__header">
+        <h3 class="ps-quick-add-modal__title" data-ps-quick-add-title></h3>
+        <button type="button" class="ps-quick-add-modal__close" data-ps-quick-add-close aria-label="{{ 'general.close' | t }}">&times;</button>
+      </div>
+      <div class="ps-quick-add-modal__options" data-ps-quick-add-options></div>
+      <button type="button" class="btn btn-primary ps-quick-add-modal__submit" data-ps-quick-add-submit disabled>{{ 'products.add_to_cart' | t }}</button>
+    </div>
+  </div>
+
+  <script type="application/json" data-ps-product-json>{{ product | json }}</script>
+</section>
+
+<style>
+  #shopify-section-{{ section.id }} .ps-pdp { padding-bottom: 48px; }
+  #shopify-section-{{ section.id }} .ps-pdp__main { padding: 24px 16px 48px; }
+  #shopify-section-{{ section.id }} .ps-pdp__grid { display: grid; grid-template-columns: 1fr; gap: 32px; }
+  #shopify-section-{{ section.id }} .ps-pdp__gallery { display: flex; flex-direction: column-reverse; gap: 12px; }
+  #shopify-section-{{ section.id }} .ps-pdp__thumbs { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
+  #shopify-section-{{ section.id }} .ps-pdp__thumbs::-webkit-scrollbar { display: none; }
+  #shopify-section-{{ section.id }} .ps-pdp__thumb { flex: 0 0 72px; width: 72px; height: 72px; border: 2px solid transparent; border-radius: 8px; overflow: hidden; position: relative; opacity: 0.6; transition: opacity 0.2s, border-color 0.2s; }
+  #shopify-section-{{ section.id }} .ps-pdp__thumb.is-active { opacity: 1; border-color: var(--color-accent, #F97316); }
+  #shopify-section-{{ section.id }} .ps-pdp__thumb img { width: 100%; height: 100%; object-fit: cover; }
+  #shopify-section-{{ section.id }} .ps-pdp__thumb-play { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.4); color: #fff; font-size: 0.75rem; }
+  #shopify-section-{{ section.id }} .ps-pdp__main-media { position: relative; border-radius: 12px; overflow: hidden; background: #f3f4f6; aspect-ratio: 3/4; }
+  #shopify-section-{{ section.id }} .ps-pdp__media-track { height: 100%; position: relative; }
+  #shopify-section-{{ section.id }} .ps-pdp__media-slide { display: none; height: 100%; }
+  #shopify-section-{{ section.id }} .ps-pdp__media-slide.is-active { display: block; }
+  #shopify-section-{{ section.id }} .ps-pdp__zoom-wrap { height: 100%; overflow: hidden; }
+  #shopify-section-{{ section.id }} .ps-pdp__main-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+  #shopify-section-{{ section.id }} .ps-pdp__zoom-wrap:hover .ps-pdp__main-img { transform: scale(1.08); }
+  #shopify-section-{{ section.id }} .ps-pdp__video-wrap, #shopify-section-{{ section.id }} .ps-pdp__video { width: 100%; height: 100%; object-fit: cover; }
+  #shopify-section-{{ section.id }} .ps-pdp__placeholder { width: 100%; height: 100%; background: linear-gradient(135deg, #e2e8f0, #cbd5e1); }
+  #shopify-section-{{ section.id }} .ps-pdp__counter { position: absolute; bottom: 12px; right: 12px; padding: 4px 10px; background: rgba(15,23,42,0.7); color: #fff; font-size: 0.75rem; font-weight: 600; border-radius: 999px; }
+  #shopify-section-{{ section.id }} .ps-pdp__breadcrumb { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 12px; font-size: 0.8125rem; color: var(--color-text-light, #6B7280); }
+  #shopify-section-{{ section.id }} .ps-pdp__breadcrumb a { color: var(--color-text-light, #6B7280); }
+  #shopify-section-{{ section.id }} .ps-pdp__breadcrumb a:hover { color: var(--color-accent, #F97316); }
+  #shopify-section-{{ section.id }} .ps-pdp__vendor { margin: 0 0 8px; font-size: 0.8125rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-light, #6B7280); }
+  #shopify-section-{{ section.id }} .ps-pdp__title { margin: 0 0 12px; font-family: var(--font-heading, 'Poppins', sans-serif); font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 800; line-height: 1.2; color: var(--color-primary, #0F172A); }
+  #shopify-section-{{ section.id }} .ps-pdp__rating-row { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+  #shopify-section-{{ section.id }} .ps-pdp__stars { display: flex; gap: 2px; }
+  #shopify-section-{{ section.id }} .ps-pdp__rating-text { font-size: 0.875rem; color: var(--color-text-light, #6B7280); }
+  #shopify-section-{{ section.id }} .ps-pdp__price-block { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 16px; }
+  #shopify-section-{{ section.id }} .ps-pdp__price { font-family: var(--font-heading, 'Poppins', sans-serif); font-size: 1.5rem; font-weight: 700; color: var(--color-primary, #0F172A); }
+  #shopify-section-{{ section.id }} .ps-pdp__price--sale { color: var(--color-accent, #F97316); }
+  #shopify-section-{{ section.id }} .ps-pdp__compare { font-size: 1rem; color: var(--color-text-light, #6B7280); }
+  #shopify-section-{{ section.id }} .ps-pdp__save-badge { padding: 4px 10px; background: var(--color-accent, #F97316); color: #fff; font-size: 0.75rem; font-weight: 700; border-radius: 4px; }
+  #shopify-section-{{ section.id }} .ps-pdp__save-badge[hidden], #shopify-section-{{ section.id }} .ps-pdp__compare[hidden] { display: none; }
+  #shopify-section-{{ section.id }} .ps-pdp__short-desc { margin-bottom: 24px; font-size: 0.9375rem; line-height: 1.6; color: var(--color-text-light, #6B7280); }
+  #shopify-section-{{ section.id }} .ps-pdp__option { margin-bottom: 20px; }
+  #shopify-section-{{ section.id }} .ps-pdp__option-label { display: block; margin-bottom: 10px; font-family: var(--font-heading, 'Poppins', sans-serif); font-size: 0.875rem; font-weight: 600; color: var(--color-primary, #0F172A); }
+  #shopify-section-{{ section.id }} .ps-pdp__swatches { display: flex; flex-wrap: wrap; gap: 10px; }
+  #shopify-section-{{ section.id }} .ps-pdp__swatch { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--color-border, #E5E7EB); padding: 3px; transition: border-color 0.2s; }
+  #shopify-section-{{ section.id }} .ps-pdp__swatch.is-selected { border-color: var(--color-accent, #F97316); box-shadow: 0 0 0 1px var(--color-accent, #F97316); }
+  #shopify-section-{{ section.id }} .ps-pdp__swatch-inner { display: block; width: 100%; height: 100%; border-radius: 50%; background: var(--swatch-color, #94a3b8); }
+  #shopify-section-{{ section.id }} .ps-pdp__size-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+  #shopify-section-{{ section.id }} .ps-pdp__size-btn { position: relative; min-width: 48px; padding: 10px 16px; border: 2px solid var(--color-border, #E5E7EB); border-radius: 8px; font-size: 0.875rem; font-weight: 600; transition: all 0.2s; }
+  #shopify-section-{{ section.id }} .ps-pdp__size-btn.is-selected { border-color: var(--color-primary, #0F172A); background: var(--color-primary, #0F172A); color: #fff; }
+  #shopify-section-{{ section.id }} .ps-pdp__size-btn.is-unavailable { opacity: 0.35; cursor: not-allowed; }
+  #shopify-section-{{ section.id }} .ps-pdp__size-btn.is-unavailable .ps-pdp__size-unavail { display: block; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; color: #ef4444; }
+  #shopify-section-{{ section.id }} .ps-pdp__size-unavail { display: none; }
+  #shopify-section-{{ section.id }} .ps-pdp__selected-options { margin-bottom: 16px; font-size: 0.875rem; color: var(--color-text-light, #6B7280); }
+  #shopify-section-{{ section.id }} .ps-pdp__stock { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; font-size: 0.875rem; font-weight: 500; }
+  #shopify-section-{{ section.id }} .ps-pdp__stock-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  #shopify-section-{{ section.id }} .ps-pdp__stock-dot--green { background: #22c55e; }
+  #shopify-section-{{ section.id }} .ps-pdp__stock-dot--yellow { background: #eab308; }
+  #shopify-section-{{ section.id }} .ps-pdp__stock-dot--red { background: #ef4444; }
+  #shopify-section-{{ section.id }} .ps-pdp__qty-row { margin-bottom: 24px; }
+  #shopify-section-{{ section.id }} .ps-pdp__qty { display: inline-flex; align-items: center; border: 1px solid var(--color-border, #E5E7EB); border-radius: 8px; overflow: hidden; }
+  #shopify-section-{{ section.id }} .ps-pdp__qty-btn { width: 44px; height: 44px; font-size: 1.125rem; font-weight: 600; }
+  #shopify-section-{{ section.id }} .ps-pdp__qty-btn:hover { background: rgba(15,23,42,0.06); }
+  #shopify-section-{{ section.id }} .ps-pdp__qty-input { width: 48px; text-align: center; border: none; outline: none; font-weight: 600; -moz-appearance: textfield; }
+  #shopify-section-{{ section.id }} .ps-pdp__qty-input::-webkit-outer-spin-button, #shopify-section-{{ section.id }} .ps-pdp__qty-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  #shopify-section-{{ section.id }} .ps-pdp__actions { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+  #shopify-section-{{ section.id }} .ps-pdp__atc, #shopify-section-{{ section.id }} .ps-pdp__buy-now { width: 100%; min-height: 52px; font-size: 1rem; }
+  #shopify-section-{{ section.id }} .ps-pdp__atc.is-loading .ps-pdp__atc-text, #shopify-section-{{ section.id }} .ps-pdp__atc.is-success .ps-pdp__atc-text { display: none; }
+  #shopify-section-{{ section.id }} .ps-pdp__atc.is-loading [data-ps-atc-spinner], #shopify-section-{{ section.id }} .ps-pdp__atc.is-success [data-ps-atc-success] { display: inline-flex !important; }
+  #shopify-section-{{ section.id }} .ps-pdp__wishlist-btn { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; font-size: 0.9375rem; font-weight: 600; color: var(--color-text, #1A1A1A); border: 1px solid var(--color-border, #E5E7EB); border-radius: 8px; transition: all 0.2s; }
+  #shopify-section-{{ section.id }} .ps-pdp__wishlist-btn.is-active { color: #ef4444; border-color: #ef4444; background: rgba(239,68,68,0.05); }
+  #shopify-section-{{ section.id }} .ps-pdp__wishlist-btn.is-active [data-ps-wishlist-icon] { content: '♥'; }
+  #shopify-section-{{ section.id }} .ps-pdp__mini-trust { display: flex; flex-wrap: wrap; gap: 12px 20px; margin-bottom: 20px; font-size: 0.8125rem; font-weight: 600; color: var(--color-text-light, #6B7280); }
+  #shopify-section-{{ section.id }} .ps-pdp__share { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  #shopify-section-{{ section.id }} .ps-pdp__share-label { font-size: 0.875rem; font-weight: 600; margin-right: 4px; }
+  #shopify-section-{{ section.id }} .ps-pdp__share-btn { padding: 8px 14px; font-size: 0.8125rem; font-weight: 600; border: 1px solid var(--color-border, #E5E7EB); border-radius: 6px; transition: all 0.2s; }
+  #shopify-section-{{ section.id }} .ps-pdp__share-btn:hover { border-color: var(--color-accent, #F97316); color: var(--color-accent, #F97316); }
+  #shopify-section-{{ section.id }} .ps-pdp__tabs-wrap { padding: 0 16px 48px; }
+  #shopify-section-{{ section.id }} .ps-pdp__tab-list { display: flex; gap: 4px; overflow-x: auto; border-bottom: 1px solid var(--color-border, #E5E7EB); margin-bottom: 24px; scrollbar-width: none; }
+  #shopify-section-{{ section.id }} .ps-pdp__tab { flex-shrink: 0; padding: 12px 20px; font-family: var(--font-heading, 'Poppins', sans-serif); font-size: 0.9375rem; font-weight: 600; color: var(--color-text-light, #6B7280); border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.2s; }
+  #shopify-section-{{ section.id }} .ps-pdp__tab.is-active { color: var(--color-primary, #0F172A); border-bottom-color: var(--color-accent, #F97316); }
+  #shopify-section-{{ section.id }} .ps-pdp__tab-panel[hidden] { display: none; }
+  #shopify-section-{{ section.id }} .ps-pdp__tab-panel { line-height: 1.7; }
+  #shopify-section-{{ section.id }} .ps-pdp__size-table { width: 100%; border-collapse: collapse; font-size: 0.9375rem; }
+  #shopify-section-{{ section.id }} .ps-pdp__size-table th, #shopify-section-{{ section.id }} .ps-pdp__size-table td { padding: 12px 16px; border: 1px solid var(--color-border, #E5E7EB); text-align: left; }
+  #shopify-section-{{ section.id }} .ps-pdp__size-table th { background: #f9fafb; font-weight: 700; }
+  #shopify-section-{{ section.id }} .ps-pdp__shipping-text p { margin-bottom: 8px; }
+  #shopify-section-{{ section.id }} .ps-pdp__reviews-summary { display: grid; grid-template-columns: 1fr; gap: 24px; margin-bottom: 32px; }
+  #shopify-section-{{ section.id }} .ps-pdp__reviews-avg { text-align: center; }
+  #shopify-section-{{ section.id }} .ps-pdp__reviews-score { display: block; font-size: 3rem; font-weight: 800; font-family: var(--font-heading, 'Poppins', sans-serif); color: var(--color-primary, #0F172A); }
+  #shopify-section-{{ section.id }} .ps-pdp__bar-row { display: grid; grid-template-columns: 32px 1fr 40px; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 0.8125rem; }
+  #shopify-section-{{ section.id }} .ps-pdp__bar { height: 8px; background: #e5e7eb; border-radius: 999px; overflow: hidden; }
+  #shopify-section-{{ section.id }} .ps-pdp__bar div { height: 100%; background: #f59e0b; border-radius: 999px; }
+  #shopify-section-{{ section.id }} .ps-pdp__review { padding: 16px 0; border-bottom: 1px solid var(--color-border, #E5E7EB); }
+  #shopify-section-{{ section.id }} .ps-pdp__review-meta { margin-bottom: 8px; font-size: 0.875rem; color: var(--color-text-light, #6B7280); }
+  #shopify-section-{{ section.id }} .ps-pdp__write-review { margin-top: 24px; }
+  #shopify-section-{{ section.id }} .ps-pdp__related, #shopify-section-{{ section.id }} .ps-pdp__recent { padding: 48px 16px; }
+  #shopify-section-{{ section.id }} .ps-pdp__section-title { margin: 0 0 32px; font-family: var(--font-heading, 'Poppins', sans-serif); font-size: clamp(1.25rem, 3vw, 1.75rem); font-weight: 700; text-align: center; color: var(--color-primary, #0F172A); }
+  #shopify-section-{{ section.id }} .ps-pdp__cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  #shopify-section-{{ section.id }} .ps-pdp__cards-grid--2 { grid-template-columns: repeat(2, 1fr); }
+  #shopify-section-{{ section.id }} .ps-pdp__recent[hidden] { display: none; }
+  /* Product cards (shared with homepage) */
+  #shopify-section-{{ section.id }} .ps-product-card__media { position: relative; aspect-ratio: 3/4; overflow: hidden; border-radius: 8px; background: var(--color-border, #E5E7EB); }
+  #shopify-section-{{ section.id }} .ps-product-card__img { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.4s, transform 0.4s; }
+  #shopify-section-{{ section.id }} .ps-product-card__img--secondary { position: absolute; inset: 0; opacity: 0; }
+  #shopify-section-{{ section.id }} .ps-product-card__media--has-secondary:hover .ps-product-card__img--primary { opacity: 0; }
+  #shopify-section-{{ section.id }} .ps-product-card__media--has-secondary:hover .ps-product-card__img--secondary { opacity: 1; }
+  #shopify-section-{{ section.id }} .ps-product-card__media:not(.ps-product-card__media--has-secondary):hover .ps-product-card__img--primary { transform: scale(1.05); }
+  #shopify-section-{{ section.id }} .ps-product-card__badges { position: absolute; top: 8px; left: 8px; z-index: 2; }
+  #shopify-section-{{ section.id }} .ps-product-card__wishlist { position: absolute; top: 8px; right: 8px; z-index: 2; width: 36px; height: 36px; background: rgba(255,255,255,0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  #shopify-section-{{ section.id }} .ps-product-card__wishlist.is-active { color: #ef4444; }
+  #shopify-section-{{ section.id }} .ps-product-card__wishlist.is-active svg { fill: #ef4444; }
+  #shopify-section-{{ section.id }} .ps-product-card__quick-add { position: absolute; bottom: 0; left: 0; right: 0; padding: 12px; background: var(--color-primary, #0F172A); color: #fff; font-size: 0.8125rem; font-weight: 600; transform: translateY(100%); transition: transform 0.3s; z-index: 2; }
+  #shopify-section-{{ section.id }} .ps-product-card:hover .ps-product-card__quick-add { transform: translateY(0); }
+  #shopify-section-{{ section.id }} .ps-product-card__info { padding: 12px 4px 0; }
+  #shopify-section-{{ section.id }} .ps-product-card__rating { display: flex; align-items: center; gap: 2px; color: #f59e0b; margin-bottom: 6px; }
+  #shopify-section-{{ section.id }} .ps-product-card__rating-text { margin-left: 4px; font-size: 0.75rem; color: var(--color-text-light, #6B7280); }
+  #shopify-section-{{ section.id }} .ps-product-card__title { margin: 0 0 6px; font-size: 0.9375rem; font-weight: 600; }
+  #shopify-section-{{ section.id }} .ps-product-card__title a { color: var(--color-primary, #0F172A); }
+  #shopify-section-{{ section.id }} .ps-product-card__price-sale { color: var(--color-accent, #F97316); margin-right: 6px; }
+  #shopify-section-{{ section.id }} .ps-product-card__price-compare { font-size: 0.8125rem; color: var(--color-text-light, #6B7280); }
+  #shopify-section-{{ section.id }} .ps-product-card__swatches { display: flex; gap: 6px; margin-top: 8px; }
+  #shopify-section-{{ section.id }} .ps-product-card__swatch { width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.1); }
+  #shopify-section-{{ section.id }} .ps-product-card__placeholder { width: 100%; height: 100%; background: linear-gradient(135deg, #e2e8f0, #cbd5e1); }
+  #shopify-section-{{ section.id }} .ps-pdp__sticky { position: fixed; bottom: 0; left: 0; right: 0; z-index: 900; background: #fff; border-top: 1px solid var(--color-border, #E5E7EB); box-shadow: 0 -4px 12px rgba(0,0,0,0.08); padding: 12px 16px; transform: translateY(100%); transition: transform 0.3s ease; }
+  #shopify-section-{{ section.id }} .ps-pdp__sticky.is-visible { transform: translateY(0); }
+  #shopify-section-{{ section.id }} .ps-pdp__sticky[hidden] { display: block; transform: translateY(100%); }
+  #shopify-section-{{ section.id }} .ps-pdp__sticky-inner { display: flex; align-items: center; gap: 12px; max-width: 1280px; margin: 0 auto; }
+  #shopify-section-{{ section.id }} .ps-pdp__sticky-info { flex: 1; min-width: 0; }
+  #shopify-section-{{ section.id }} .ps-pdp__sticky-title { margin: 0; font-size: 0.8125rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #shopify-section-{{ section.id }} .ps-pdp__sticky-price { margin: 0; font-size: 0.9375rem; font-weight: 700; color: var(--color-accent, #F97316); }
+  #shopify-section-{{ section.id }} .ps-pdp__sticky-atc { flex-shrink: 0; padding: 12px 20px; white-space: nowrap; }
+  #shopify-section-{{ section.id }} .ps-quick-add-modal { position: fixed; inset: 0; z-index: 1400; display: flex; align-items: flex-end; justify-content: center; }
+  #shopify-section-{{ section.id }} .ps-quick-add-modal[hidden] { display: none; }
+  #shopify-section-{{ section.id }} .ps-quick-add-modal__backdrop { position: absolute; inset: 0; background: rgba(15,23,42,0.5); }
+  #shopify-section-{{ section.id }} .ps-quick-add-modal__panel { position: relative; width: 100%; max-width: 420px; background: #fff; border-radius: 16px 16px 0 0; padding: 24px; }
+  #shopify-section-{{ section.id }} .ps-quick-add-modal__header { display: flex; justify-content: space-between; margin-bottom: 16px; }
+  #shopify-section-{{ section.id }} .ps-quick-add-modal__title { margin: 0; font-size: 1.125rem; font-weight: 700; }
+  #shopify-section-{{ section.id }} .ps-quick-add-modal__options { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  #shopify-section-{{ section.id }} .ps-quick-add-modal__option { padding: 10px 16px; border: 2px solid var(--color-border, #E5E7EB); border-radius: 8px; font-weight: 600; }
+  #shopify-section-{{ section.id }} .ps-quick-add-modal__option.is-selected { border-color: var(--color-accent, #F97316); }
+  #shopify-section-{{ section.id }} .ps-quick-add-modal__submit { width: 100%; }
+  @media screen and (min-width: 768px) {
+    #shopify-section-{{ section.id }} .ps-pdp__cards-grid, #shopify-section-{{ section.id }} .ps-pdp__cards-grid--4 { grid-template-columns: repeat(4, 1fr); gap: 24px; }
+    #shopify-section-{{ section.id }} .ps-pdp__reviews-summary { grid-template-columns: auto 1fr; }
+  }
+  @media screen and (min-width: 1024px) {
+    #shopify-section-{{ section.id }} .ps-pdp__grid { grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+    #shopify-section-{{ section.id }} .ps-pdp__gallery { flex-direction: row; gap: 16px; }
+    #shopify-section-{{ section.id }} .ps-pdp__thumbs { flex-direction: column; overflow-y: auto; max-height: 600px; flex: 0 0 80px; }
+    #shopify-section-{{ section.id }} .ps-pdp__thumb { flex: 0 0 80px; width: 80px; height: 80px; }
+    #shopify-section-{{ section.id }} .ps-pdp__main-media { flex: 1; }
+    #shopify-section-{{ section.id }} .ps-pdp__sticky { display: none !important; }
+  }
+  @media screen and (max-width: 1023px) {
+    #shopify-section-{{ section.id }} .ps-pdp { padding-bottom: 80px; }
+  }
+</style>
+
+<script>
+  (function () {
+    'use strict';
+
+    var section = document.getElementById('shopify-section-{{ section.id }}');
+    if (!section) return;
+
+    var WISHLIST_KEY = 'pakstyle_wishlist';
+    var RECENT_KEY = 'pakstyle_recently_viewed';
+    var LOW_STOCK = 5;
+    var SWATCH_COLORS = {
+      black: '#000000', white: '#ffffff', navy: '#1e3a5f', 'navy-blue': '#1e3a5f',
+      blue: '#2563eb', red: '#dc2626', green: '#16a34a', grey: '#6b7280', gray: '#6b7280',
+      beige: '#d4c4a8', brown: '#78350f', olive: '#556b2f', maroon: '#800000', pink: '#ec4899'
+    };
+
+    var jsonEl = section.querySelector('[data-ps-product-json]');
+    var product = jsonEl ? JSON.parse(jsonEl.textContent) : null;
+    if (!product) return;
+
+    function getVariantOptions(variant) {
+      return [variant.option1, variant.option2, variant.option3].filter(function (o) { return o; });
+    }
+
+    function findVariant(opts) {
+      return product.variants.find(function (v) {
+        var vOpts = getVariantOptions(v);
+        return opts.every(function (o, i) { return vOpts[i] === o; });
+      });
+    }
+
+    function formatMoney(cents) {
+      return window.PakStyle && window.PakStyle.formatMoney ? window.PakStyle.formatMoney(cents) : 'PKR ' + (cents / 100).toFixed(2);
+    }
+
+    /* Gallery */
+    var slides = section.querySelectorAll('[data-ps-media-slide]');
+    var thumbs = section.querySelectorAll('[data-ps-thumb]');
+    var counter = section.querySelector('[data-ps-counter]');
+    var currentSlide = 0;
+
+    function goToSlide(index) {
+      currentSlide = index;
+      slides.forEach(function (s, i) { s.classList.toggle('is-active', i === index); });
+      thumbs.forEach(function (t, i) { t.classList.toggle('is-active', i === index); });
+      if (counter) counter.textContent = (index + 1) + ' / ' + slides.length;
+    }
+
+    thumbs.forEach(function (thumb) {
+      thumb.addEventListener('click', function () {
+        goToSlide(parseInt(thumb.dataset.mediaIndex, 10));
+      });
+    });
+
+    /* Mobile swipe */
+    var track = section.querySelector('[data-ps-media-track]');
+    if (track && slides.length > 1) {
+      var startX = 0;
+      track.addEventListener('touchstart', function (e) { startX = e.touches[0].clientX; }, { passive: true });
+      track.addEventListener('touchend', function (e) {
+        var diff = startX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 50) {
+          if (diff > 0) goToSlide((currentSlide + 1) % slides.length);
+          else goToSlide((currentSlide - 1 + slides.length) % slides.length);
+        }
+      }, { passive: true });
+    }
+
+    /* Color swatches background */
+    section.querySelectorAll('[data-swatch-name]').forEach(function (el) {
+      var name = el.dataset.swatchName;
+      if (SWATCH_COLORS[name]) el.style.backgroundColor = SWATCH_COLORS[name];
+    });
+
+    /* Variant selection */
+    var variantInput = section.querySelector('[data-ps-variant-input]');
+    var priceEl = section.querySelector('[data-ps-price]');
+    var compareEl = section.querySelector('[data-ps-compare]');
+    var saveBadge = section.querySelector('[data-ps-save-badge]');
+    var stockEl = section.querySelector('[data-ps-stock]');
+    var selectedOptsEl = section.querySelector('[data-ps-selected-options]');
+    var atcBtn = section.querySelector('[data-ps-add-to-cart]');
+    var buyNowBtn = section.querySelector('[data-ps-buy-now]');
+    var stickyPrice = section.querySelector('[data-ps-sticky-price]');
+    var stickyAtc = section.querySelector('[data-ps-sticky-atc]');
+    var atcText = section.querySelector('[data-ps-atc-text]');
+
+    function getSelectedOptions() {
+      var opts = [];
+      section.querySelectorAll('[data-option-index]').forEach(function (group) {
+        var selected = group.querySelector('.is-selected');
+        opts.push(selected ? selected.dataset.optionValue : '');
+      });
+      if (!opts.length && product.variants.length === 1) {
+        return getVariantOptions(product.variants[0]);
+      }
+      return opts;
+    }
+
+    function updateAvailabilityUI() {
+      var selected = getSelectedOptions();
+      section.querySelectorAll('.ps-pdp__size-btn').forEach(function (btn) {
+        var group = btn.closest('[data-option-index]');
+        if (!group) return;
+        var idx = parseInt(group.dataset.optionIndex, 10);
+        var testOpts = selected.slice();
+        testOpts[idx] = btn.dataset.optionValue;
+        var match = findVariant(testOpts);
+        btn.classList.toggle('is-unavailable', !match || !match.available);
+      });
+    }
+
+    function updateVariantUI(variant) {
+      if (!variant) return;
+      if (variantInput) variantInput.value = variant.id;
+
+      if (priceEl) {
+        priceEl.textContent = formatMoney(variant.price);
+        priceEl.classList.toggle('ps-pdp__price--sale', variant.compare_at_price > variant.price);
+      }
+      if (compareEl) {
+        if (variant.compare_at_price > variant.price) {
+          compareEl.textContent = formatMoney(variant.compare_at_price);
+          compareEl.hidden = false;
+          if (saveBadge) {
+            var pct = Math.round((variant.compare_at_price - variant.price) * 100 / variant.compare_at_price);
+            saveBadge.textContent = 'SAVE ' + pct + '%';
+            saveBadge.hidden = false;
+          }
+        } else {
+          compareEl.hidden = true;
+          if (saveBadge) saveBadge.hidden = true;
+        }
+      }
+      if (stickyPrice) stickyPrice.textContent = formatMoney(variant.price);
+
+      if (stockEl) {
+        var dot = stockEl.querySelector('.ps-pdp__stock-dot');
+        var text = stockEl.querySelector('[data-ps-stock-text]');
+        dot.className = 'ps-pdp__stock-dot';
+        if (!variant.available) {
+          dot.classList.add('ps-pdp__stock-dot--red');
+          text.textContent = 'Out of Stock';
+          if (atcBtn) atcBtn.disabled = true;
+          if (buyNowBtn) buyNowBtn.disabled = true;
+          if (stickyAtc) stickyAtc.disabled = true;
+          if (atcText) atcText.textContent = 'Sold Out';
+        } else if (variant.inventory_management && variant.inventory_quantity > 0 && variant.inventory_quantity <= LOW_STOCK) {
+          dot.classList.add('ps-pdp__stock-dot--yellow');
+          text.textContent = 'Only ' + variant.inventory_quantity + ' left!';
+          if (atcBtn) atcBtn.disabled = false;
+          if (buyNowBtn) buyNowBtn.disabled = false;
+          if (stickyAtc) stickyAtc.disabled = false;
+          if (atcText) atcText.textContent = 'Add to Cart';
+        } else {
+          dot.classList.add('ps-pdp__stock-dot--green');
+          text.textContent = 'In Stock — Ships within 24 hours';
+          if (atcBtn) atcBtn.disabled = false;
+          if (buyNowBtn) buyNowBtn.disabled = false;
+          if (stickyAtc) stickyAtc.disabled = false;
+          if (atcText) atcText.textContent = 'Add to Cart';
+        }
+      }
+
+      var opts = getVariantOptions(variant);
+      if (selectedOptsEl && product.options) {
+        selectedOptsEl.textContent = product.options.map(function (name, i) {
+          return name + ': ' + (opts[i] || '—');
+        }).join(' | ');
+      }
+
+      if (variant.featured_image) {
+        var imgIndex = product.media ? product.media.findIndex(function (m) { return m.id === variant.featured_image.id; }) : -1;
+        if (imgIndex >= 0) goToSlide(imgIndex);
+      }
+
+      var url = new URL(window.location.href);
+      url.searchParams.set('variant', variant.id);
+      window.history.replaceState({}, '', url.toString());
+    }
+
+    section.querySelectorAll('[data-option-value]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var group = btn.closest('[data-option-index]');
+        group.querySelectorAll('[data-option-value]').forEach(function (b) { b.classList.remove('is-selected'); });
+        btn.classList.add('is-selected');
+        var variant = findVariant(getSelectedOptions());
+        if (variant) updateVariantUI(variant);
+        updateAvailabilityUI();
+      });
+    });
+
+    updateAvailabilityUI();
+    var initVariant = findVariant(getSelectedOptions()) || product.variants[0];
+    if (initVariant) updateVariantUI(initVariant);
+
+    /* Quantity */
+    var qtyInput = section.querySelector('[data-ps-qty-input]');
+    section.querySelector('[data-ps-qty-minus]') && section.querySelector('[data-ps-qty-minus]').addEventListener('click', function () {
+      qtyInput.value = Math.max(1, parseInt(qtyInput.value, 10) - 1);
+    });
+    section.querySelector('[data-ps-qty-plus]') && section.querySelector('[data-ps-qty-plus]').addEventListener('click', function () {
+      qtyInput.value = parseInt(qtyInput.value, 10) + 1;
+    });
+
+    /* Add to cart */
+    function handleAddToCart(btn, openDrawer) {
+      if (!window.PakStyle) return;
+      var variantId = variantInput.value;
+      var qty = parseInt(qtyInput.value, 10) || 1;
+      var mainBtn = section.querySelector('[data-ps-add-to-cart]');
+      if (mainBtn) {
+        mainBtn.classList.add('is-loading');
+        mainBtn.classList.remove('is-success');
+      }
+      window.PakStyle.addToCart(variantId, qty).then(function () {
+        if (mainBtn) {
+          mainBtn.classList.remove('is-loading');
+          mainBtn.classList.add('is-success');
+          setTimeout(function () { mainBtn.classList.remove('is-success'); }, 2500);
+        }
+        if (openDrawer !== false && window.PakStyle.toggleCartDrawer) {
+          window.PakStyle.toggleCartDrawer(true);
+        }
+      }).catch(function () {
+        if (mainBtn) mainBtn.classList.remove('is-loading');
+      });
+    }
+
+    if (atcBtn) atcBtn.addEventListener('click', function () { handleAddToCart(atcBtn, true); });
+    if (stickyAtc) stickyAtc.addEventListener('click', function () { handleAddToCart(stickyAtc, true); });
+
+    if (buyNowBtn) {
+      buyNowBtn.addEventListener('click', function () {
+        if (!window.PakStyle) return;
+        var variantId = variantInput.value;
+        var qty = parseInt(qtyInput.value, 10) || 1;
+        window.PakStyle.addToCart(variantId, qty).then(function () {
+          window.location.href = '/checkout';
+        });
+      });
+    }
+
+    /* Wishlist */
+    var wishlistBtn = section.querySelector('[data-ps-wishlist-btn]');
+    function getWishlist() { try { return JSON.parse(localStorage.getItem(WISHLIST_KEY) || '[]'); } catch (e) { return []; } }
+    function updateWishlistBtn() {
+      if (!wishlistBtn) return;
+      var active = getWishlist().indexOf(String(product.id)) !== -1;
+      wishlistBtn.classList.toggle('is-active', active);
+      var icon = wishlistBtn.querySelector('[data-ps-wishlist-icon]');
+      if (icon) icon.textContent = active ? '♥' : '♡';
+    }
+    if (wishlistBtn) {
+      updateWishlistBtn();
+      wishlistBtn.addEventListener('click', function () {
+        var list = getWishlist();
+        var id = String(product.id);
+        var idx = list.indexOf(id);
+        if (idx === -1) list.push(id); else list.splice(idx, 1);
+        localStorage.setItem(WISHLIST_KEY, JSON.stringify(list));
+        document.dispatchEvent(new CustomEvent('pakstyle:wishlist:updated'));
+        updateWishlistBtn();
+      });
+    }
+
+    /* Copy link */
+    section.querySelector('[data-ps-copy-link]') && section.querySelector('[data-ps-copy-link]').addEventListener('click', function () {
+      navigator.clipboard.writeText(window.location.href).then(function () {
+        var btn = section.querySelector('[data-ps-copy-link]');
+        var orig = btn.textContent;
+        btn.textContent = 'Copied!';
+        setTimeout(function () { btn.textContent = orig; }, 2000);
+      });
+    });
+
+    /* Tabs */
+    section.querySelectorAll('[data-ps-tab]').forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        var id = tab.dataset.psTab;
+        section.querySelectorAll('[data-ps-tab]').forEach(function (t) {
+          t.classList.toggle('is-active', t === tab);
+          t.setAttribute('aria-selected', t === tab ? 'true' : 'false');
+        });
+        section.querySelectorAll('[data-ps-tab-panel]').forEach(function (panel) {
+          var show = panel.dataset.psTabPanel === id;
+          panel.classList.toggle('is-active', show);
+          panel.hidden = !show;
+        });
+      });
+    });
+
+    /* Sticky bar */
+    var stickyBar = section.querySelector('[data-ps-sticky-bar]');
+    var mainAtcWrap = section.querySelector('[data-ps-main-atc-wrap]');
+    if (stickyBar && mainAtcWrap && section.dataset.enableSticky === 'true') {
+      stickyBar.hidden = false;
+      if ('IntersectionObserver' in window) {
+        var observer = new IntersectionObserver(function (entries) {
+          var visible = entries[0].isIntersecting;
+          stickyBar.classList.toggle('is-visible', !visible);
+        }, { threshold: 0 });
+        observer.observe(mainAtcWrap);
+      }
+    }
+
+    /* Recently viewed */
+    function saveRecentlyViewed() {
+      if (section.dataset.enableRecent !== 'true') return;
+      try {
+        var list = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
+        var img = product.featured_image || (product.images && product.images[0]);
+        var item = {
+          id: product.id,
+          handle: product.handle,
+          title: product.title,
+          url: '/products/' + product.handle,
+          price: product.price,
+          compare_at_price: product.compare_at_price,
+          image: img ? (img.src || img) : null,
+          available: product.available
+        };
+        list = list.filter(function (p) { return p.id !== product.id; });
+        list.unshift(item);
+        list = list.slice(0, 8);
+        localStorage.setItem(RECENT_KEY, JSON.stringify(list));
+      } catch (e) {}
+    }
+
+    function renderRecentlyViewed() {
+      if (section.dataset.enableRecent !== 'true') return;
+      var recentSection = section.querySelector('[data-ps-recent-section]');
+      var grid = section.querySelector('[data-ps-recent-grid]');
+      if (!recentSection || !grid) return;
+
+      var list = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]')
+        .filter(function (p) { return p.id !== product.id; })
+        .slice(0, 4);
+
+      if (!list.length) return;
+
+      recentSection.hidden = false;
+      grid.innerHTML = list.map(function (p) {
+        var imgUrl = '';
+        if (p.image) {
+          imgUrl = typeof p.image === 'string' ? p.image : (p.image.src || p.image.url || '');
+        }
+        var onSale = p.compare_at_price && p.compare_at_price > p.price;
+        return '<article class="ps-product-card">' +
+          '<div class="ps-product-card__media"><a href="' + p.url + '" class="ps-product-card__link">' +
+          (imgUrl ? '<img src="' + imgUrl + '" alt="" class="ps-product-card__img ps-product-card__img--primary" loading="lazy">' : '<div class="ps-product-card__placeholder"></div>') +
+          '</a></div><div class="ps-product-card__info">' +
+          '<h3 class="ps-product-card__title"><a href="' + p.url + '">' + p.title + '</a></h3>' +
+          '<div class="ps-product-card__price">' +
+          (onSale ? '<span class="ps-product-card__price-sale">' + formatMoney(p.price) + '</span><s class="ps-product-card__price-compare">' + formatMoney(p.compare_at_price) + '</s>' : '<span>' + formatMoney(p.price) + '</span>') +
+          '</div></div></article>';
+      }).join('');
+    }
+
+    saveRecentlyViewed();
+    renderRecentlyViewed();
+
+    /* Quick add for related products */
+    var modal = section.querySelector('[data-ps-quick-add-modal]');
+    var modalTitle = section.querySelector('[data-ps-quick-add-title]');
+    var modalOptions = section.querySelector('[data-ps-quick-add-options]');
+    var modalSubmit = section.querySelector('[data-ps-quick-add-submit]');
+    var activeProduct = null;
+    var selectedVariantId = null;
+
+    section.querySelectorAll('[data-ps-quick-add-close]').forEach(function (el) {
+      el.addEventListener('click', function () { modal.hidden = true; document.body.style.overflow = ''; });
+    });
+
+    if (modalSubmit) {
+      modalSubmit.addEventListener('click', function () {
+        if (!selectedVariantId || !window.PakStyle) return;
+        window.PakStyle.addToCart(selectedVariantId, 1).then(function () {
+          modal.hidden = true;
+          document.body.style.overflow = '';
+          window.PakStyle.toggleCartDrawer(true);
+        });
+      });
+    }
+
+    section.querySelectorAll('[data-quick-add]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var productId = btn.dataset.productId;
+        var jsonScript = section.querySelector('[data-product-json="' + productId + '"]');
+        if (!jsonScript) return;
+        var p = JSON.parse(jsonScript.textContent);
+        if (parseInt(btn.dataset.variantCount, 10) <= 1) {
+          window.PakStyle.addToCart(btn.dataset.singleVariantId, 1).then(function () {
+            window.PakStyle.toggleCartDrawer(true);
+          });
+          return;
+        }
+        activeProduct = p;
+        selectedVariantId = null;
+        modalTitle.textContent = p.title;
+        modalOptions.innerHTML = '';
+        p.variants.forEach(function (v) {
+          var opt = document.createElement('button');
+          opt.type = 'button';
+          opt.className = 'ps-quick-add-modal__option';
+          opt.textContent = v.title;
+          opt.disabled = !v.available;
+          opt.addEventListener('click', function () {
+            modalOptions.querySelectorAll('.ps-quick-add-modal__option').forEach(function (o) { o.classList.remove('is-selected'); });
+            opt.classList.add('is-selected');
+            selectedVariantId = v.id;
+            modalSubmit.disabled = false;
+          });
+          modalOptions.appendChild(opt);
+        });
+        modal.hidden = false;
+        document.body.style.overflow = 'hidden';
+      });
+    });
+
+    section.querySelectorAll('[data-wishlist-toggle]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var list = getWishlist();
+        var id = String(btn.dataset.wishlistToggle);
+        var idx = list.indexOf(id);
+        if (idx === -1) list.push(id); else list.splice(idx, 1);
+        localStorage.setItem(WISHLIST_KEY, JSON.stringify(list));
+        btn.classList.toggle('is-active', list.indexOf(id) !== -1);
+        document.dispatchEvent(new CustomEvent('pakstyle:wishlist:updated'));
+      });
+    });
+
+    section.querySelectorAll('[data-wishlist-toggle]').forEach(function (btn) {
+      btn.classList.toggle('is-active', getWishlist().indexOf(String(btn.dataset.wishlistToggle)) !== -1);
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Product form",
+  "tag": "section",
+  "class": "section-product-form",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_sticky_bar",
+      "label": "Enable sticky mobile add to cart bar",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_recently_viewed",
+      "label": "Enable recently viewed products",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_related_products",
+      "label": "Enable related products",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "related_products_count",
+      "label": "Number of related products",
+      "options": [
+        { "value": "2", "label": "2" },
+        { "value": "4", "label": "4" }
+      ],
+      "default": "4"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product form"
+    }
+  ]
+}
+{% endschema %}
