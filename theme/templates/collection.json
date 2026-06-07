@@ -1,0 +1,17 @@
+{
+  "sections": {
+    "main": {
+      "type": "collection-template",
+      "settings": {
+        "enable_sidebar_filters": true,
+        "enable_banner": true,
+        "infinite_scroll": false,
+        "products_per_page": "24",
+        "default_sort": "featured"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

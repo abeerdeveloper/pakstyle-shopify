@@ -19,7 +19,7 @@
   endfor
 -%}
 
-<article class="ps-product-card" data-product-id="{{ card_product.id }}">
+<article class="ps-product-card{% if list_view %} ps-product-card--list{% endif %}" data-product-id="{{ card_product.id }}">
   <div class="ps-product-card__media{% if second_image %} ps-product-card__media--has-secondary{% endif %}">
     <a href="{{ card_product.url }}" class="ps-product-card__link" aria-label="{{ card_product.title }}">
       {%- if card_product.featured_image -%}
@@ -113,6 +113,9 @@
         <span>{{ current_variant.price | money }}</span>
       {%- endif -%}
     </div>
+    {%- if list_view and card_product.description != blank -%}
+      <p class="ps-product-card__excerpt">{{ card_product.description | strip_html | truncate: 160 }}</p>
+    {%- endif -%}
     {%- if color_option and color_option.values.size > 0 -%}
       <div class="ps-product-card__swatches">
         {%- for value in color_option.values limit: 5 -%}
