@@ -74,13 +74,14 @@ export function CartProvider({ children }){
   }
 
   async function clearCart(){
-    // remove all lines
     if (!cart?.lines?.length) return;
     const lineIds = cart.lines.map(l=>l.id);
-    await removeItem(lineIds);
+    setLoading(true);
+    await shopifyFetch({ query: removeCartLines, variables: { cartId, lineIds } });
     setCart(null);
     if (typeof window !== 'undefined') window.localStorage.removeItem('pak_cart_id');
     setCartId(null);
+    setLoading(false);
   }
 
   const itemCount = cart?.lines?.reduce((s,l)=>s + (l.quantity || 0), 0) || 0;
