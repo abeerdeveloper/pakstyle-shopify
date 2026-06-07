@@ -912,3 +912,49 @@ ol.list li {
     transform: translateY(0);
   }
 }
+
+/* --------------------------------------------------------------------------
+   Phase 10 — Mobile Optimization Global Styles
+   -------------------------------------------------------------------------- */
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+@media screen and (max-width: 767px) {
+  /* Prevent iOS zoom on input focus */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+
+  /* Smooth iOS scrolling momentum on overflow scroll containers */
+  .ps-cart-drawer__body,
+  .ps-mobile-menu__panel,
+  .ps-search__panel,
+  .ps-collection__sheet-body,
+  .ps-pdp__thumbs,
+  .ps-pdp__media-track {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Standardize touch target minimums for interactive buttons & links */
+  .ps-header__icon-btn,
+  .ps-header__menu-btn,
+  .wishlist-btn,
+  .ps-announcement__close,
+  .announcement-bar__close,
+  .ps-search__close,
+  .toast-close,
+  .ps-cart-drawer__close,
+  .ps-cart-drawer__qty-btn,
+  .ps-cart-drawer__item-remove,
+  .ps-collection__mobile-filter-btn,
+  .ps-collection__clear-all,
+  .ps-collection__view-btn,
+  .ps-pdp__qty-btn,
+  .ps-pdp__share-btn,
+  .ps-pdp__thumb {
+    min-width: 44px !important;
+    min-height: 44px !important;
+  }
+}

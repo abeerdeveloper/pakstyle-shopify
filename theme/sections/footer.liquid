@@ -37,8 +37,8 @@
 
     {%- comment -%} Column 2: Quick Links {%- endcomment -%}
     <div class="ps-footer__col">
-      <h3 class="ps-footer__heading">{{ 'footer.quick_links' | t }}</h3>
-      <ul class="ps-footer__links">
+      <h3 class="ps-footer__heading" data-ps-footer-accordion-trigger>{{ 'footer.quick_links' | t }} <span class="ps-footer__accordion-arrow" aria-hidden="true">▼</span></h3>
+      <ul class="ps-footer__links" data-ps-footer-accordion-panel>
         <li><a href="{{ routes.root_url }}">Home</a></li>
         <li><a href="{{ routes.collections_url }}/new-arrivals">New Arrivals</a></li>
         <li><a href="{{ routes.collections_url }}/men">Men</a></li>
@@ -49,8 +49,8 @@
 
     {%- comment -%} Column 3: Help {%- endcomment -%}
     <div class="ps-footer__col">
-      <h3 class="ps-footer__heading">{{ 'footer.help' | t }}</h3>
-      <ul class="ps-footer__links">
+      <h3 class="ps-footer__heading" data-ps-footer-accordion-trigger>{{ 'footer.help' | t }} <span class="ps-footer__accordion-arrow" aria-hidden="true">▼</span></h3>
+      <ul class="ps-footer__links" data-ps-footer-accordion-panel>
         <li><a href="{{ routes.root_url }}pages/contact">Contact Us</a></li>
         <li><a href="{{ routes.root_url }}pages/size-guide">Size Guide</a></li>
         <li><a href="{{ routes.root_url }}pages/shipping-policy">Shipping Policy</a></li>
@@ -311,7 +311,72 @@
       text-align: left;
     }
   }
-</style>
+    @media screen and (max-width: 767px) {
+      .ps-footer__heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        padding: 12px 0;
+        margin-bottom: 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .ps-footer__accordion-arrow {
+        font-size: 0.75rem;
+        transition: transform 0.3s ease;
+      }
+      .ps-footer__heading.is-active .ps-footer__accordion-arrow {
+        transform: rotate(180deg);
+      }
+      .ps-footer__links {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out, padding 0.3s ease;
+        padding: 0;
+      }
+      .ps-footer__links.is-open {
+        max-height: 300px;
+        padding: 12px 0;
+      }
+      .ps-footer__logo {
+        display: block;
+        text-align: center;
+        margin-bottom: 12px;
+      }
+      .ps-footer__tagline {
+        text-align: center;
+        max-width: 100%;
+        margin-bottom: 16px;
+      }
+      .ps-footer__social {
+        justify-content: center;
+        margin-bottom: 24px;
+      }
+      .ps-footer__col {
+        text-align: center;
+      }
+      .ps-footer__links a {
+        display: block;
+        padding: 8px 0;
+      }
+    }
+  </style>
+
+  <script>
+    (function() {
+      'use strict';
+      document.querySelectorAll('[data-ps-footer-accordion-trigger]').forEach(function (trigger) {
+        trigger.addEventListener('click', function () {
+          if (window.innerWidth >= 768) return;
+          var panel = trigger.nextElementSibling;
+          var isOpen = panel.classList.contains('is-open');
+
+          trigger.classList.toggle('is-active', !isOpen);
+          panel.classList.toggle('is-open', !isOpen);
+        });
+      });
+    })();
+  </script>
 
 {% schema %}
 {

@@ -245,10 +245,12 @@
         <button type="button" class="ps-pdp__tab" role="tab" aria-selected="false" data-ps-tab="reviews">{{ 'products.tab_reviews' | t }}</button>
       </div>
 
+      <button type="button" class="ps-pdp__accordion-trigger is-active" data-ps-accordion-trigger="description">{{ 'products.tab_description' | t }}</button>
       <div class="ps-pdp__tab-panel is-active" data-ps-tab-panel="description" role="tabpanel">
         <div class="rte">{{ product.description }}</div>
       </div>
 
+      <button type="button" class="ps-pdp__accordion-trigger" data-ps-accordion-trigger="size-guide">{{ 'products.tab_size_guide' | t }}</button>
       <div class="ps-pdp__tab-panel" data-ps-tab-panel="size-guide" role="tabpanel" hidden>
         <table class="ps-pdp__size-table">
           <thead>
@@ -264,6 +266,7 @@
         </table>
       </div>
 
+      <button type="button" class="ps-pdp__accordion-trigger" data-ps-accordion-trigger="shipping">{{ 'products.tab_shipping' | t }}</button>
       <div class="ps-pdp__tab-panel" data-ps-tab-panel="shipping" role="tabpanel" hidden>
         <div class="ps-pdp__shipping-text">
           <p>Free shipping on orders above PKR 2,500.</p>
@@ -273,6 +276,7 @@
         </div>
       </div>
 
+      <button type="button" class="ps-pdp__accordion-trigger" data-ps-accordion-trigger="reviews">{{ 'products.tab_reviews' | t }}</button>
       <div class="ps-pdp__tab-panel" data-ps-tab-panel="reviews" role="tabpanel" hidden>
         <div class="ps-pdp__reviews-summary">
           <div class="ps-pdp__reviews-avg">
@@ -379,6 +383,25 @@
   #shopify-section-{{ section.id }} .ps-pdp__media-track { height: 100%; position: relative; }
   #shopify-section-{{ section.id }} .ps-pdp__media-slide { display: none; height: 100%; }
   #shopify-section-{{ section.id }} .ps-pdp__media-slide.is-active { display: block; }
+
+  @media screen and (max-width: 1023px) {
+    #shopify-section-{{ section.id }} .ps-pdp__media-track {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      height: 100%;
+    }
+    #shopify-section-{{ section.id }} .ps-pdp__media-track::-webkit-scrollbar {
+      display: none;
+    }
+    #shopify-section-{{ section.id }} .ps-pdp__media-slide {
+      display: block !important;
+      flex: 0 0 100%;
+      scroll-snap-align: start;
+      height: 100%;
+    }
+  }
   #shopify-section-{{ section.id }} .ps-pdp__zoom-wrap { height: 100%; overflow: hidden; }
   #shopify-section-{{ section.id }} .ps-pdp__main-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
   #shopify-section-{{ section.id }} .ps-pdp__zoom-wrap:hover .ps-pdp__main-img { transform: scale(1.08); }
@@ -408,6 +431,21 @@
   #shopify-section-{{ section.id }} .ps-pdp__swatch-inner { display: block; width: 100%; height: 100%; border-radius: 50%; background: var(--swatch-color, #94a3b8); }
   #shopify-section-{{ section.id }} .ps-pdp__size-btns { display: flex; flex-wrap: wrap; gap: 8px; }
   #shopify-section-{{ section.id }} .ps-pdp__size-btn { position: relative; min-width: 48px; padding: 10px 16px; border: 2px solid var(--color-border, #E5E7EB); border-radius: 8px; font-size: 0.875rem; font-weight: 600; transition: all 0.2s; }
+
+  @media screen and (max-width: 767px) {
+    #shopify-section-{{ section.id }} .ps-pdp__swatch {
+      width: 44px;
+      height: 44px;
+    }
+    #shopify-section-{{ section.id }} .ps-pdp__size-btn {
+      min-width: 48px;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+    }
+  }
   #shopify-section-{{ section.id }} .ps-pdp__size-btn.is-selected { border-color: var(--color-primary, #0F172A); background: var(--color-primary, #0F172A); color: #fff; }
   #shopify-section-{{ section.id }} .ps-pdp__size-btn.is-unavailable { opacity: 0.35; cursor: not-allowed; }
   #shopify-section-{{ section.id }} .ps-pdp__size-btn.is-unavailable .ps-pdp__size-unavail { display: block; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; color: #ef4444; }
@@ -484,8 +522,62 @@
   #shopify-section-{{ section.id }} .ps-product-card__swatch { width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.1); }
   #shopify-section-{{ section.id }} .ps-product-card__placeholder { width: 100%; height: 100%; background: linear-gradient(135deg, #e2e8f0, #cbd5e1); }
   #shopify-section-{{ section.id }} .ps-pdp__sticky { position: fixed; bottom: 0; left: 0; right: 0; z-index: 900; background: #fff; border-top: 1px solid var(--color-border, #E5E7EB); box-shadow: 0 -4px 12px rgba(0,0,0,0.08); padding: 12px 16px; transform: translateY(100%); transition: transform 0.3s ease; }
+  @media screen and (max-width: 767px) {
+    #shopify-section-{{ section.id }} .ps-pdp__sticky {
+      padding-bottom: calc(12px + env(safe-area-inset-bottom));
+    }
+  }
   #shopify-section-{{ section.id }} .ps-pdp__sticky.is-visible { transform: translateY(0); }
   #shopify-section-{{ section.id }} .ps-pdp__sticky[hidden] { display: block; transform: translateY(100%); }
+
+  .ps-pdp__accordion-trigger {
+    display: none;
+  }
+
+  @media screen and (max-width: 767px) {
+    .ps-pdp__tab-list {
+      display: none !important;
+    }
+    .ps-pdp__accordion-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 14px 16px;
+      background: #f9fafb;
+      border: 1px solid var(--color-border, #E5E7EB);
+      border-radius: 8px;
+      font-family: var(--font-heading, 'Poppins', sans-serif);
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: var(--color-primary, #0F172A);
+      margin-bottom: 8px;
+      cursor: pointer;
+      text-align: left;
+      box-sizing: border-box;
+    }
+    .ps-pdp__accordion-trigger::after {
+      content: '+';
+      font-size: 1.25rem;
+      color: var(--color-text-light, #6B7280);
+      transition: transform 0.2s ease;
+    }
+    .ps-pdp__accordion-trigger.is-active::after {
+      content: '−';
+    }
+    .ps-pdp__tab-panel {
+      padding: 16px;
+      border: 1px solid var(--color-border, #E5E7EB);
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+      margin-top: -12px;
+      margin-bottom: 16px;
+      background: #fff;
+    }
+    .ps-pdp__tab-panel[hidden] {
+      display: none !important;
+    }
+  }
   #shopify-section-{{ section.id }} .ps-pdp__sticky-inner { display: flex; align-items: center; gap: 12px; max-width: 1280px; margin: 0 auto; }
   #shopify-section-{{ section.id }} .ps-pdp__sticky-info { flex: 1; min-width: 0; }
   #shopify-section-{{ section.id }} .ps-pdp__sticky-title { margin: 0; font-size: 0.8125rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -557,6 +649,7 @@
     var thumbs = section.querySelectorAll('[data-ps-thumb]');
     var counter = section.querySelector('[data-ps-counter]');
     var currentSlide = 0;
+    var track = section.querySelector('[data-ps-media-track]');
 
     function goToSlide(index) {
       currentSlide = index;
@@ -567,22 +660,33 @@
 
     thumbs.forEach(function (thumb) {
       thumb.addEventListener('click', function () {
-        goToSlide(parseInt(thumb.dataset.mediaIndex, 10));
+        var index = parseInt(thumb.dataset.mediaIndex, 10);
+        if (window.innerWidth < 1024 && track) {
+          track.scrollTo({
+            left: index * track.clientWidth,
+            behavior: 'smooth'
+          });
+          currentSlide = index;
+          thumbs.forEach(function (t, i) { t.classList.toggle('is-active', i === index); });
+          if (counter) counter.textContent = (index + 1) + ' / ' + slides.length;
+        } else {
+          goToSlide(index);
+        }
       });
     });
 
-    /* Mobile swipe */
-    var track = section.querySelector('[data-ps-media-track]');
+    /* Mobile scroll snap detection */
     if (track && slides.length > 1) {
-      var startX = 0;
-      track.addEventListener('touchstart', function (e) { startX = e.touches[0].clientX; }, { passive: true });
-      track.addEventListener('touchend', function (e) {
-        var diff = startX - e.changedTouches[0].clientX;
-        if (Math.abs(diff) > 50) {
-          if (diff > 0) goToSlide((currentSlide + 1) % slides.length);
-          else goToSlide((currentSlide - 1 + slides.length) % slides.length);
+      var handleScroll = debounce(function () {
+        if (window.innerWidth >= 1024) return;
+        var index = Math.round(track.scrollLeft / track.clientWidth);
+        if (index !== currentSlide && index >= 0 && index < slides.length) {
+          currentSlide = index;
+          thumbs.forEach(function (t, i) { t.classList.toggle('is-active', i === index); });
+          if (counter) counter.textContent = (index + 1) + ' / ' + slides.length;
         }
-      }, { passive: true });
+      }, 50);
+      track.addEventListener('scroll', handleScroll, { passive: true });
     }
 
     /* Color swatches background */
@@ -779,6 +883,39 @@
           var show = panel.dataset.psTabPanel === id;
           panel.classList.toggle('is-active', show);
           panel.hidden = !show;
+        });
+
+        // Sync with accordion headers if on desktop
+        section.querySelectorAll('[data-ps-accordion-trigger]').forEach(function (t) {
+          t.classList.toggle('is-active', t.dataset.psAccordionTrigger === id);
+        });
+      });
+    });
+
+    /* Mobile Accordion */
+    section.querySelectorAll('[data-ps-accordion-trigger]').forEach(function (trigger) {
+      trigger.addEventListener('click', function () {
+        var id = trigger.dataset.psAccordionTrigger;
+        var panel = section.querySelector('[data-ps-tab-panel="' + id + '"]');
+        var isActive = trigger.classList.contains('is-active');
+
+        // Close all other panels for clean accordion
+        section.querySelectorAll('[data-ps-accordion-trigger]').forEach(function (t) {
+          t.classList.remove('is-active');
+        });
+        section.querySelectorAll('[data-ps-tab-panel]').forEach(function (p) {
+          p.hidden = true;
+        });
+
+        // Toggle current panel
+        if (!isActive) {
+          trigger.classList.add('is-active');
+          if (panel) panel.hidden = false;
+        }
+
+        // Sync with desktop tabs
+        section.querySelectorAll('[data-ps-tab]').forEach(function (t) {
+          t.classList.toggle('is-active', t.dataset.psTab === id && !isActive);
         });
       });
     });
