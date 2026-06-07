@@ -1,6 +1,6 @@
-import { shopifyFetch } from '../../../../lib/shopify';
-import { getProductByHandle, getProducts } from '../../../../lib/queries';
-import ProductGrid from '../../../../components/ProductGrid';
+import { shopifyFetch } from '../../../lib/shopify';
+import { getProductByHandle, getProducts } from '../../../lib/queries';
+import ProductGrid from '../../../components/ProductGrid';
 
 export default async function ProductPage({ params }){
   const handle = params.handle;

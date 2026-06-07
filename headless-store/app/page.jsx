@@ -1,6 +1,6 @@
-import { shopifyFetch } from '../../lib/shopify';
-import { getProducts } from '../../lib/queries';
-import ProductGrid from '../../components/ProductGrid';
+import { shopifyFetch } from '../lib/shopify';
+import { getProducts } from '../lib/queries';
+import ProductGrid from '../components/ProductGrid';
 
 export default async function HomePage(){
   const res = await shopifyFetch({ query: getProducts, variables: { first: 8 } });

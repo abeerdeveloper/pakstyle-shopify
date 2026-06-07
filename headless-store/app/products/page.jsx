@@ -1,7 +1,7 @@
-import { shopifyFetch } from '../../../lib/shopify';
-import { getProducts } from '../../../lib/queries';
-import ProductGrid from '../../../components/ProductGrid';
-import LoadingSpinner from '../../../components/LoadingSpinner';
+import { shopifyFetch } from '../../lib/shopify';
+import { getProducts } from '../../lib/queries';
+import ProductGrid from '../../components/ProductGrid';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 export default async function ProductsPage(){
   const res = await shopifyFetch({ query: getProducts, variables: { first: 12 } });
