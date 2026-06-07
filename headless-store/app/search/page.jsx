@@ -1,6 +1,6 @@
-import { shopifyFetch } from '../../../lib/shopify';
-import { searchProducts } from '../../../lib/queries';
-import ProductGrid from '../../../components/ProductGrid';
+import { shopifyFetch } from '../../lib/shopify';
+import { searchProducts } from '../../lib/queries';
+import ProductGrid from '../../components/ProductGrid';
 
 export default async function SearchPage({ searchParams }){
   const q = searchParams?.q || '';

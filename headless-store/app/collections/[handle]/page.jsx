@@ -1,6 +1,6 @@
-import { shopifyFetch } from '../../../../lib/shopify';
-import { getCollectionByHandle } from '../../../../lib/queries';
-import ProductGrid from '../../../../components/ProductGrid';
+import { shopifyFetch } from '../../../lib/shopify';
+import { getCollectionByHandle } from '../../../lib/queries';
+import ProductGrid from '../../../components/ProductGrid';
 
 export default async function CollectionPage({ params }){
   const handle = params.handle;
