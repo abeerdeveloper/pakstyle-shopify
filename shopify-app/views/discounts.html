@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PakStyle — Discounts</title>
+  <link rel="stylesheet" href="/public/styles.css" />
+</head>
+<body>
+  <main class="container">
+    <header>
+      <h1>Discounts</h1>
+      <nav>
+        <a href="/dashboard">Dashboard</a> · <a href="/products">Products</a>
+      </nav>
+    </header>
+
+    <section class="card">
+      <h2>Generate Discount Code</h2>
+      <form id="discountForm">
+        <label>Prefix</label>
+        <input id="prefix" value="PAK" />
+        <label>Value</label>
+        <input id="value" value="10.0" />
+        <label>Type</label>
+        <select id="type"><option value="fixed_amount">Fixed Amount</option><option value="percentage">Percentage</option></select>
+        <button type="submit">Generate</button>
+      </form>
+      <pre id="discountResult"></pre>
+    </section>
+  </main>
+
+  <script>
+    document.getElementById('discountForm').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const prefix = document.getElementById('prefix').value;
+      const value = document.getElementById('value').value;
+      const type = document.getElementById('type').value;
+      const res = await fetch('/api/discounts/generate', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ prefix, value, type })});
+      const data = await res.json();
+      document.getElementById('discountResult').textContent = JSON.stringify(data, null, 2);
+    });
+  </script>
+</body>
+</html>

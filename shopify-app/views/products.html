@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PakStyle — Products</title>
+  <link rel="stylesheet" href="/public/styles.css" />
+</head>
+<body>
+  <main class="container">
+    <header>
+      <h1>Products — Bulk Tag Editor</h1>
+      <nav>
+        <a href="/dashboard">Dashboard</a> · <a href="/discounts">Discounts</a>
+      </nav>
+    </header>
+
+    <section class="card">
+      <h2>Bulk Tag Products</h2>
+      <form id="tagForm">
+        <label>Product IDs (comma separated)</label>
+        <input id="productIds" placeholder="123,456,789" />
+        <label>Tag</label>
+        <input id="tag" placeholder="New-Tag" />
+        <button type="submit">Apply Tag</button>
+      </form>
+      <pre id="tagResult"></pre>
+    </section>
+
+    <section class="card">
+      <h2>Low Stock Alerts</h2>
+      <label>Threshold</label>
+      <input id="threshold" type="number" value="5" />
+      <button id="checkLow">Check</button>
+      <pre id="lowResult"></pre>
+    </section>
+  </main>
+
+  <script>
+    document.getElementById('tagForm').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const ids = document.getElementById('productIds').value.split(',').map(s=>s.trim()).filter(Boolean);
+      const tag = document.getElementById('tag').value.trim();
+      const res = await fetch('/api/products/bulk-tag', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({productIds: ids, tag})});
+      const data = await res.json();
+      document.getElementById('tagResult').textContent = JSON.stringify(data, null, 2);
+    });
+
+    document.getElementById('checkLow').addEventListener('click', async ()=>{
+      const threshold = document.getElementById('threshold').value || 5;
+      const res = await fetch('/api/products/low-stock?threshold='+encodeURIComponent(threshold));
+      const data = await res.json();
+      document.getElementById('lowResult').textContent = JSON.stringify(data, null, 2);
+    });
+  </script>
+</body>
+</html>

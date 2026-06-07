@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PakStyle — Dashboard</title>
+  <link rel="stylesheet" href="/public/styles.css" />
+  <style>body{background:#f8fafc}</style>
+</head>
+<body>
+  <main class="container">
+    <header>
+      <h1>PakStyle Dashboard</h1>
+      <nav>
+        <a href="/products">Products</a> · <a href="/discounts">Discounts</a>
+      </nav>
+    </header>
+
+    <section id="kpis" class="grid">
+      <div class="card"> <h3>Total Orders</h3> <div id="orders">—</div> </div>
+      <div class="card"> <h3>Total Products</h3> <div id="products">—</div> </div>
+      <div class="card"> <h3>Store</h3> <div id="store">—</div> </div>
+    </section>
+  </main>
+
+  <script>
+    async function loadKPIs(){
+      try{
+        const res = await fetch('/api/dashboard');
+        const data = await res.json();
+        const k = data.kpis || {};
+        document.getElementById('orders').textContent = k.orders && k.orders.totalCount != null ? k.orders.totalCount : 'n/a';
+        document.getElementById('products').textContent = k.products && k.products.totalCount != null ? k.products.totalCount : 'n/a';
+        document.getElementById('store').textContent = (k.shop && k.shop.name) || (k.shop && k.shop.myshopifyDomain) || 'n/a';
+      }catch(e){ console.error(e); }
+    }
+    loadKPIs();
+  </script>
+</body>
+</html>
