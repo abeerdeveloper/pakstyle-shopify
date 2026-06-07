@@ -106,7 +106,7 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="M12 20.5l-1.05-1.05C5.4 14.4 2 11.36 2 7.5 2 4.42 4.42 2 7.5 2c1.74 0 3.41.81 4.5 2.09C13.09 2.81 14.76 2 16.5 2 19.58 2 22 4.42 22 7.5c0 3.86-3.4 6.9-8.95 11.95L12 20.5z" stroke="currentColor" stroke-width="2"/>
         </svg>
-        <span class="ps-header__badge" data-ps-wishlist-count hidden>0</span>
+        <span class="ps-header__badge wishlist-count" data-ps-wishlist-count hidden>0</span>
       </button>
 
       <a
@@ -131,7 +131,7 @@
           <circle cx="10" cy="20" r="1.5" fill="currentColor"/>
           <circle cx="18" cy="20" r="1.5" fill="currentColor"/>
         </svg>
-        <span class="ps-header__badge" data-cart-count {% if cart.item_count == 0 %}hidden{% endif %}>{{ cart.item_count }}</span>
+        <span class="ps-header__badge cart-count" data-cart-count {% if cart.item_count == 0 %}hidden{% endif %}>{{ cart.item_count }}</span>
       </button>
     </div>
   </div>
@@ -207,20 +207,26 @@
         </svg>
         <input
           type="search"
+          id="search-input"
           name="q"
           class="ps-search__input"
           data-ps-search-input
           placeholder="{{ 'header.search_placeholder' | t }}"
           autocomplete="off"
           aria-label="{{ 'general.search' | t }}"
+          aria-controls="search-suggestions"
+          aria-expanded="false"
         >
+        <div id="search-loading" class="search-loading" hidden aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none" stroke-dasharray="31.4"><animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="0.8s" repeatCount="indefinite"/></circle></svg>
+        </div>
         <button type="button" class="ps-search__close" data-ps-search-close aria-label="{{ 'general.close' | t }}">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
           </svg>
         </button>
       </form>
-      <div class="ps-search__results" data-ps-search-results hidden></div>
+      <div id="search-suggestions" class="ps-search__results" data-ps-search-results hidden role="listbox"></div>
     </div>
   </div>
 </div>
@@ -680,11 +686,55 @@
     margin-top: 2px;
   }
 
-  .ps-search__empty {
+  .ps-search__result.is-highlighted,
+  .suggestion-item.is-highlighted {
+    background: rgba(15, 23, 42, 0.08);
+    outline: 2px solid var(--color-accent, #F97316);
+    outline-offset: -2px;
+  }
+
+  .search-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--color-text-light, #6B7280);
+  }
+
+  .search-loading[hidden] {
+    display: none;
+  }
+
+  .no-results {
     padding: 16px 8px;
+    text-align: center;
     color: var(--color-text-light, #6B7280);
     font-size: 0.9375rem;
-    text-align: center;
+  }
+
+  .suggestion-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .suggestion-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .suggestion-title {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9375rem;
+  }
+
+  .suggestion-price {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--color-accent, #F97316);
+    font-weight: 600;
+    margin-top: 2px;
   }
 
   @keyframes psSlideUp {
@@ -755,8 +805,6 @@
     'use strict';
 
     var SCROLL_THRESHOLD = 80;
-    var SEARCH_DEBOUNCE = 300;
-    var WISHLIST_KEY = 'pakstyle_wishlist';
     var ANNOUNCEMENT_KEY = 'pakstyle_announcement_dismissed';
 
     var header = document.querySelector('[data-ps-header]');
@@ -857,165 +905,10 @@
       });
     }
 
-    /** Search overlay with predictive search */
-    function initSearch() {
-      var overlay = document.querySelector('[data-ps-search]');
-      var input = document.querySelector('[data-ps-search-input]');
-      var results = document.querySelector('[data-ps-search-results]');
-      if (!overlay || !input) return;
-
-      var openBtns = document.querySelectorAll('[data-ps-search-open]');
-      var closeBtns = overlay.querySelectorAll('[data-ps-search-close]');
-      var moneyFormat = (window.PakStyleConfig && window.PakStyleConfig.moneyFormat) || 'Rs. {{amount}}';
-
-      function formatMoney(cents) {
-        var amount = (cents / 100).toFixed(2);
-        return moneyFormat.replace(/\{\{\s*amount\s*\}\}/g, amount);
-      }
-
-      function setOpen(isOpen) {
-        overlay.classList.toggle('is-open', isOpen);
-        overlay.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
-        document.body.style.overflow = isOpen ? 'hidden' : '';
-
-        if (isOpen) {
-          setTimeout(function () { input.focus(); }, 100);
-        } else {
-          input.value = '';
-          if (results) {
-            results.innerHTML = '';
-            results.hidden = true;
-          }
-        }
-      }
-
-      openBtns.forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          var mobileMenu = document.querySelector('[data-ps-mobile-menu]');
-          if (mobileMenu && mobileMenu.classList.contains('is-open')) {
-            mobileMenu.classList.remove('is-open');
-            mobileMenu.setAttribute('aria-hidden', 'true');
-          }
-          setOpen(true);
-        });
-      });
-
-      closeBtns.forEach(function (btn) {
-        btn.addEventListener('click', function () { setOpen(false); });
-      });
-
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && overlay.classList.contains('is-open')) {
-          setOpen(false);
-        }
-      });
-
-      var fetchSuggestions = debounce(function (query) {
-        if (!query || query.length < 2) {
-          if (results) { results.innerHTML = ''; results.hidden = true; }
-          return;
-        }
-
-        var url = '/search/suggest.json?q=' + encodeURIComponent(query) +
-          '&resources[type]=product&resources[limit]=5';
-
-        fetch(url)
-          .then(function (res) { return res.json(); })
-          .then(function (data) {
-            if (!results) return;
-            var products = (data.resources && data.resources.results && data.resources.results.products) || [];
-
-            if (!products.length) {
-              results.innerHTML = '<p class="ps-search__empty">No products found.</p>';
-              results.hidden = false;
-              return;
-            }
-
-            results.innerHTML = products.map(function (product) {
-              var img = product.featured_image && product.featured_image.url
-                ? product.featured_image.url
-                : '';
-              var price = product.price ? formatMoney(product.price) : '';
-              return '<a href="' + product.url + '" class="ps-search__result">' +
-                (img ? '<img src="' + img + '" alt="" class="ps-search__result-img" width="48" height="48">' : '<div class="ps-search__result-img"></div>') +
-                '<div class="ps-search__result-info">' +
-                '<div class="ps-search__result-title">' + product.title + '</div>' +
-                (price ? '<div class="ps-search__result-price">' + price + '</div>' : '') +
-                '</div></a>';
-            }).join('');
-
-            results.hidden = false;
-          })
-          .catch(function () {
-            if (results) {
-              results.innerHTML = '<p class="ps-search__empty">Search unavailable. Try again.</p>';
-              results.hidden = false;
-            }
-          });
-      }, SEARCH_DEBOUNCE);
-
-      input.addEventListener('input', function () {
-        fetchSuggestions(input.value.trim());
-      });
-    }
-
-    /** Wishlist count from localStorage */
-    function initWishlist() {
-      function getCount() {
-        try {
-          var list = JSON.parse(localStorage.getItem(WISHLIST_KEY) || '[]');
-          return Array.isArray(list) ? list.length : 0;
-        } catch (e) {
-          return 0;
-        }
-      }
-
-      function updateBadges() {
-        var count = getCount();
-        document.querySelectorAll('[data-ps-wishlist-count]').forEach(function (el) {
-          if (count > 0) {
-            el.textContent = count;
-            el.hidden = false;
-          } else {
-            el.hidden = true;
-          }
-        });
-        document.querySelectorAll('[data-ps-wishlist-count-mobile]').forEach(function (el) {
-          el.textContent = count;
-        });
-      }
-
-      updateBadges();
-      window.addEventListener('storage', updateBadges);
-      document.addEventListener('pakstyle:wishlist:updated', updateBadges);
-    }
-
-    /** Update cart count badges on cart events */
-    function initCartBadges() {
-      function updateCount(count) {
-        document.querySelectorAll('[data-cart-count]').forEach(function (el) {
-          el.textContent = count;
-          el.hidden = count <= 0;
-        });
-      }
-
-      document.addEventListener('pakstyle:cart:updated', function (e) {
-        var cart = e.detail && e.detail.cart;
-        if (cart) updateCount(cart.item_count);
-      });
-
-      if (window.PakStyle && window.PakStyle.cartState) {
-        updateCount(window.PakStyle.cartState.item_count);
-      }
-    }
-
     function init() {
       initAnnouncement();
       initStickyHeader();
       initMobileMenu();
-      initSearch();
-      initWishlist();
-      initCartBadges();
     }
 
     if (document.readyState === 'loading') {

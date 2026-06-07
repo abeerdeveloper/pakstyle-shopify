@@ -517,48 +517,12 @@
     var section = document.getElementById('shopify-section-{{ section.id }}');
     if (!section) return;
 
-    var WISHLIST_KEY = 'pakstyle_wishlist';
     var modal = section.querySelector('[data-ps-quick-add-modal]');
     var modalTitle = section.querySelector('[data-ps-quick-add-title]');
     var modalOptions = section.querySelector('[data-ps-quick-add-options]');
     var modalSubmit = section.querySelector('[data-ps-quick-add-submit]');
     var activeProduct = null;
     var selectedVariantId = null;
-
-    function getWishlist() {
-      try {
-        return JSON.parse(localStorage.getItem(WISHLIST_KEY) || '[]');
-      } catch (e) {
-        return [];
-      }
-    }
-
-    function saveWishlist(list) {
-      localStorage.setItem(WISHLIST_KEY, JSON.stringify(list));
-      document.dispatchEvent(new CustomEvent('pakstyle:wishlist:updated'));
-    }
-
-    function updateWishlistUI() {
-      var list = getWishlist();
-      section.querySelectorAll('[data-wishlist-toggle]').forEach(function (btn) {
-        var id = String(btn.getAttribute('data-wishlist-toggle'));
-        btn.classList.toggle('is-active', list.indexOf(id) !== -1);
-      });
-    }
-
-    section.querySelectorAll('[data-wishlist-toggle]').forEach(function (btn) {
-      btn.addEventListener('click', function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        var id = String(btn.getAttribute('data-wishlist-toggle'));
-        var list = getWishlist();
-        var idx = list.indexOf(id);
-        if (idx === -1) list.push(id);
-        else list.splice(idx, 1);
-        saveWishlist(list);
-        updateWishlistUI();
-      });
-    });
 
     function setQuickAddState(btn, state) {
       btn.classList.remove('is-loading', 'is-success');
@@ -626,9 +590,6 @@
       window.PakStyle.addToCart(variantId, 1)
         .then(function () {
           if (btn) setQuickAddState(btn, 'is-success');
-          if (window.PakStyle.toggleCartDrawer) {
-            window.PakStyle.toggleCartDrawer(true);
-          }
         })
         .catch(function () {
           if (btn) setQuickAddState(btn, null);
@@ -658,8 +619,6 @@
         }
       });
     });
-
-    updateWishlistUI();
   })();
 </script>
 

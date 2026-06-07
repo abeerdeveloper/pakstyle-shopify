@@ -357,7 +357,6 @@
     var section = document.getElementById('shopify-section-{{ section.id }}');
     if (!section) return;
 
-    var WISHLIST_KEY = 'pakstyle_wishlist';
     var perPage = parseInt(section.dataset.perPage, 10) || 24;
     var infiniteScroll = section.dataset.infiniteScroll === 'true';
     var defaultSort = section.dataset.defaultSort || 'featured';
@@ -390,8 +389,6 @@
       if (sortDesktop) sortDesktop.remove();
       mobileFilterBody.appendChild(clone);
     }
-
-    function getWishlist() { try { return JSON.parse(localStorage.getItem(WISHLIST_KEY) || '[]'); } catch (e) { return []; } }
 
     function syncSortSelects(val) {
       if (sortSidebar) sortSidebar.value = val;
@@ -632,18 +629,6 @@
       }, { rootMargin: '200px' }).observe(sentinel);
     }
 
-    section.querySelectorAll('[data-wishlist-toggle]').forEach(function (btn) {
-      btn.classList.toggle('is-active', getWishlist().indexOf(String(btn.dataset.wishlistToggle)) !== -1);
-      btn.addEventListener('click', function (e) {
-        e.preventDefault(); e.stopPropagation();
-        var list = getWishlist(), id = String(btn.dataset.wishlistToggle), idx = list.indexOf(id);
-        if (idx === -1) list.push(id); else list.splice(idx, 1);
-        localStorage.setItem(WISHLIST_KEY, JSON.stringify(list));
-        btn.classList.toggle('is-active', list.indexOf(id) !== -1);
-        document.dispatchEvent(new CustomEvent('pakstyle:wishlist:updated'));
-      });
-    });
-
     var modal = section.querySelector('[data-ps-quick-add-modal]');
     var modalTitle = section.querySelector('[data-ps-quick-add-title]');
     var modalOptions = section.querySelector('[data-ps-quick-add-options]');
@@ -662,7 +647,7 @@
       if (!jsonScript) return;
       var p = JSON.parse(jsonScript.textContent);
       if (parseInt(btn.dataset.variantCount, 10) <= 1) {
-        window.PakStyle.addToCart(btn.dataset.singleVariantId, 1).then(function () { window.PakStyle.toggleCartDrawer(true); });
+        window.PakStyle.addToCart(btn.dataset.singleVariantId, 1);
         return;
       }
       selectedVariantId = null;
@@ -693,7 +678,6 @@
         window.PakStyle.addToCart(selectedVariantId, 1).then(function () {
           modal.hidden = true;
           document.body.style.overflow = '';
-          window.PakStyle.toggleCartDrawer(true);
         });
       });
     }
