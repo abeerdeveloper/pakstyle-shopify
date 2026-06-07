@@ -27,6 +27,24 @@
     <meta name="robots" content="index, follow">
 
     <link rel="canonical" href="{{ canonical_url }}">
+    <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+
+    {%- comment -%} Preload LCP (above-the-fold) images {%- endcomment -%}
+    {%- if template.name == 'product' -%}
+      {%- assign featured_media = product.selected_or_first_available_variant.featured_media | default: product.featured_media -%}
+      {%- if featured_media -%}
+        <link rel="preload" as="image" href="{{ featured_media | image_url: width: 720 }}" imagesrcset="{%- if featured_media.width >= 375 -%}{{ featured_media | image_url: width: 375 }} 375w,{%- endif -%}{%- if featured_media.width >= 550 -%}{{ featured_media | image_url: width: 550 }} 550w,{%- endif -%}{%- if featured_media.width >= 720 -%}{{ featured_media | image_url: width: 720 }} 720w,{%- endif -%}{%- if featured_media.width >= 900 -%}{{ featured_media | image_url: width: 900 }} 900w,{%- endif -%}{%- if featured_media.width >= 1100 -%}{{ featured_media | image_url: width: 1100 }} 1100w{%- endif -%}" imagesizes="(min-width: 1200px) 550px, (min-width: 768px) 50vw, 100vw">
+      {%- endif -%}
+    {%- elsif template.name == 'collection' -%}
+      {%- if collection.image -%}
+        <link rel="preload" as="image" href="{{ collection.image | image_url: width: 1600 }}" imagesrcset="{%- if collection.image.width >= 375 -%}{{ collection.image | image_url: width: 375 }} 375w,{%- endif -%}{%- if collection.image.width >= 750 -%}{{ collection.image | image_url: width: 750 }} 750w,{%- endif -%}{%- if collection.image.width >= 1100 -%}{{ collection.image | image_url: width: 1100 }} 1100w,{%- endif -%}{%- if collection.image.width >= 1500 -%}{{ collection.image | image_url: width: 1500 }} 1500w{%- endif -%}" imagesizes="100vw">
+      {%- else -%}
+        {%- assign first_product = collection.products.first -%}
+        {%- if first_product and first_product.featured_image -%}
+          <link rel="preload" as="image" href="{{ first_product.featured_image | image_url: width: 360 }}" imagesrcset="{%- if first_product.featured_image.width >= 180 -%}{{ first_product.featured_image | image_url: width: 180 }} 180w,{%- endif -%}{%- if first_product.featured_image.width >= 360 -%}{{ first_product.featured_image | image_url: width: 360 }} 360w,{%- endif -%}{%- if first_product.featured_image.width >= 540 -%}{{ first_product.featured_image | image_url: width: 540 }} 540w{%- endif -%}" imagesizes="(max-width: 767px) 50vw, 25vw">
+        {%- endif -%}
+      {%- endif -%}
+    {%- endif -%}
 
     {%- comment -%} Open Graph {%- endcomment -%}
     <meta property="og:site_name" content="{{ shop.name | escape }}">
@@ -50,10 +68,11 @@
     {%- comment -%} Google Fonts — Inter (body) + Poppins (headings) {%- endcomment -%}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap"
-      rel="stylesheet"
-    >
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+    </noscript>
 
     {%- comment -%} CSS custom properties from theme settings {%- endcomment -%}
     <style>
@@ -83,23 +102,11 @@
     </style>
 
     {%- comment -%} Schema.org JSON-LD structured data {%- endcomment -%}
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "Store",
-        "name": {{ shop.name | json }},
-        "url": {{ shop.url | json }},
-        "description": {{ shop.description | default: 'Bold casual clothing for young men in Pakistan.' | json }},
-        "image": {%- if shop.brand.logo -%}{{ shop.brand.logo | image_url: width: 512 | prepend: 'https:' | json }}{%- else -%}{{ shop.url | append: '/cdn/shop/files/logo.png' | json }}{%- endif -%},
-        "address": {
-          "@type": "PostalAddress",
-          "addressCountry": "PK"
-        }
-      }
-    </script>
+    {% render 'seo-structured-data' %}
 
     {{ content_for_header }}
 
+    <link rel="preload" as="style" href="{{ 'theme.css' | asset_url }}">
     {{ 'theme.css' | asset_url | stylesheet_tag }}
 
     <script>
