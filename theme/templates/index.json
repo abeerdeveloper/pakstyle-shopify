@@ -65,17 +65,6 @@
         "enable_quick_add": true
       }
     },
-    "promotional-banner": {
-      "type": "promotional-banner",
-      "settings": {
-        "headline": "Summer Essentials Are Here",
-        "body_text": "<p>Discover breathable fabrics and bold cuts designed for Pakistan's heat. Limited edition drops — grab yours before they're gone.</p>",
-        "cta_text": "Shop Collection",
-        "cta_link": "",
-        "layout_direction": "image_left",
-        "background_color": "#FFFFFF"
-      }
-    },
     "testimonials": {
       "type": "testimonials",
       "blocks": {
@@ -160,7 +149,6 @@
     "hero-banner",
     "trust-badges",
     "featured-collection",
-    "promotional-banner",
     "testimonials",
     "email-signup",
     "instagram-feed"
