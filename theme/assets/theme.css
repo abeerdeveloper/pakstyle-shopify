@@ -1,0 +1,121 @@
+/* PakStyle — theme foundation */
+
+:root {
+  /* Colors */
+  --color-primary: {{ settings.color_primary }};
+  --color-accent: {{ settings.color_accent }};
+  --color-background: {{ settings.color_background }};
+  --color-text: {{ settings.color_text }};
+  --color-text-muted: {{ settings.color_text_muted }};
+  --color-border: {{ settings.color_border }};
+
+  /* Typography */
+  --font-heading: {{ settings.font_heading.family }}, {{ settings.font_heading.fallback_families }};
+  --font-body: {{ settings.font_body.family }}, {{ settings.font_body.fallback_families }};
+  --font-size-base: {{ settings.font_size_base }}px;
+  --font-size-heading-scale: {{ settings.font_size_heading_scale }};
+  --font-weight-heading: {{ settings.font_heading.weight }};
+  --font-weight-body: {{ settings.font_body.weight }};
+  --font-style-heading: {{ settings.font_heading.style }};
+  --font-style-body: {{ settings.font_body.style }};
+
+  /* Spacing */
+  --spacing-section: {{ settings.spacing_section }}px;
+  --spacing-container: {{ settings.spacing_container }}px;
+  --spacing-grid-gap: {{ settings.spacing_grid_gap }}px;
+  --spacing-border-radius: {{ settings.spacing_border_radius }}px;
+
+  /* Derived heading sizes */
+  --font-size-h1: calc(var(--font-size-base) * var(--font-size-heading-scale) * 2.5);
+  --font-size-h2: calc(var(--font-size-base) * var(--font-size-heading-scale) * 2);
+  --font-size-h3: calc(var(--font-size-base) * var(--font-size-heading-scale) * 1.5);
+  --font-size-h4: calc(var(--font-size-base) * var(--font-size-heading-scale) * 1.25);
+}
+
+/* Font face declarations from theme settings */
+{{ settings.font_heading | font_face: font_display: 'swap' }}
+{{ settings.font_body | font_face: font_display: 'swap' }}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: var(--font-size-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-body);
+  font-style: var(--font-style-body);
+  color: var(--color-text);
+  background-color: var(--color-background);
+  line-height: 1.6;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-heading);
+  font-style: var(--font-style-heading);
+  color: var(--color-primary);
+  line-height: 1.2;
+  margin-top: 0;
+}
+
+h1 { font-size: var(--font-size-h1); }
+h2 { font-size: var(--font-size-h2); }
+h3 { font-size: var(--font-size-h3); }
+h4 { font-size: var(--font-size-h4); }
+
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+a:hover {
+  opacity: 0.85;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: var(--spacing-container);
+  z-index: 9999;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-primary);
+  color: var(--color-background);
+  border-radius: var(--spacing-border-radius);
+  font-weight: 600;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+.page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  padding: var(--spacing-section) var(--spacing-container);
+}

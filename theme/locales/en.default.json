@@ -1,0 +1,50 @@
+{
+  "general": {
+    "store_name": "PakStyle",
+    "tagline": "Bold style for the modern man",
+    "continue_shopping": "Continue shopping",
+    "search": "Search",
+    "menu": "Menu",
+    "close": "Close",
+    "loading": "Loading…"
+  },
+  "accessibility": {
+    "skip_to_content": "Skip to content",
+    "main_navigation": "Main navigation",
+    "close_menu": "Close menu",
+    "open_menu": "Open menu"
+  },
+  "products": {
+    "product": "Product",
+    "add_to_cart": "Add to cart",
+    "sold_out": "Sold out",
+    "unavailable": "Unavailable",
+    "quantity": "Quantity",
+    "price": "Price",
+    "compare_at_price": "Compare at price"
+  },
+  "cart": {
+    "title": "Your cart",
+    "empty": "Your cart is empty",
+    "checkout": "Checkout",
+    "subtotal": "Subtotal",
+    "remove": "Remove",
+    "update": "Update cart"
+  },
+  "collections": {
+    "title": "Collections",
+    "view_all": "View all",
+    "no_products": "No products found in this collection."
+  },
+  "customer": {
+    "account": "Account",
+    "login": "Log in",
+    "logout": "Log out",
+    "register": "Create account"
+  },
+  "404": {
+    "title": "Page not found",
+    "subtext": "The page you're looking for doesn't exist.",
+    "link": "Back to home"
+  }
+}

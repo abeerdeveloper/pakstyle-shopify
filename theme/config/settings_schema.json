@@ -1,0 +1,151 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "PakStyle",
+    "theme_version": "1.0.0",
+    "theme_author": "PakStyle",
+    "theme_documentation_url": "https://pakstyle.pk",
+    "theme_support_url": "https://pakstyle.pk/support"
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Brand colors"
+      },
+      {
+        "type": "color",
+        "id": "color_primary",
+        "label": "Primary color",
+        "default": "#0F172A",
+        "info": "Used for headers, navigation, and primary UI elements."
+      },
+      {
+        "type": "color",
+        "id": "color_accent",
+        "label": "Accent color",
+        "default": "#F97316",
+        "info": "Used for CTAs, highlights, and energetic brand moments."
+      },
+      {
+        "type": "color",
+        "id": "color_background",
+        "label": "Background color",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "color_text",
+        "label": "Text color",
+        "default": "#1E293B"
+      },
+      {
+        "type": "color",
+        "id": "color_text_muted",
+        "label": "Muted text color",
+        "default": "#64748B"
+      },
+      {
+        "type": "color",
+        "id": "color_border",
+        "label": "Border color",
+        "default": "#E2E8F0"
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Fonts"
+      },
+      {
+        "type": "font_picker",
+        "id": "font_heading",
+        "label": "Heading font",
+        "default": "assistant_n4"
+      },
+      {
+        "type": "font_picker",
+        "id": "font_body",
+        "label": "Body font",
+        "default": "assistant_n4"
+      },
+      {
+        "type": "header",
+        "content": "Font sizes"
+      },
+      {
+        "type": "range",
+        "id": "font_size_base",
+        "label": "Base font size",
+        "min": 14,
+        "max": 20,
+        "step": 1,
+        "unit": "px",
+        "default": 16
+      },
+      {
+        "type": "range",
+        "id": "font_size_heading_scale",
+        "label": "Heading scale",
+        "min": 1,
+        "max": 1.5,
+        "step": 0.1,
+        "default": 1.2,
+        "info": "Multiplier applied to heading sizes."
+      }
+    ]
+  },
+  {
+    "name": "Spacing",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Layout spacing"
+      },
+      {
+        "type": "range",
+        "id": "spacing_section",
+        "label": "Section vertical spacing",
+        "min": 32,
+        "max": 120,
+        "step": 4,
+        "unit": "px",
+        "default": 64
+      },
+      {
+        "type": "range",
+        "id": "spacing_container",
+        "label": "Container horizontal padding",
+        "min": 16,
+        "max": 64,
+        "step": 4,
+        "unit": "px",
+        "default": 24
+      },
+      {
+        "type": "range",
+        "id": "spacing_grid_gap",
+        "label": "Grid gap",
+        "min": 8,
+        "max": 48,
+        "step": 4,
+        "unit": "px",
+        "default": 24
+      },
+      {
+        "type": "range",
+        "id": "spacing_border_radius",
+        "label": "Border radius",
+        "min": 0,
+        "max": 24,
+        "step": 2,
+        "unit": "px",
+        "default": 8
+      }
+    ]
+  }
+]

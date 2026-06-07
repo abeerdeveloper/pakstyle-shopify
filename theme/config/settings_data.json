@@ -1,0 +1,18 @@
+{
+  "current": {
+    "color_primary": "#0F172A",
+    "color_accent": "#F97316",
+    "color_background": "#FFFFFF",
+    "color_text": "#1E293B",
+    "color_text_muted": "#64748B",
+    "color_border": "#E2E8F0",
+    "font_heading": "assistant_n4",
+    "font_body": "assistant_n4",
+    "font_size_base": 16,
+    "font_size_heading_scale": 1.2,
+    "spacing_section": 64,
+    "spacing_container": 24,
+    "spacing_grid_gap": 24,
+    "spacing_border_radius": 8
+  }
+}
