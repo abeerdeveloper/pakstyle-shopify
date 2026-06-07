@@ -1,0 +1,233 @@
+<section id="shopify-section-{{ section.id }}" class="ps-email-signup" style="background-color: {{ section.settings.background_color }};">
+  <div class="container ps-email-signup__inner">
+    {%- if section.settings.headline != blank -%}
+      <h2 class="ps-email-signup__headline">{{ section.settings.headline }}</h2>
+    {%- endif -%}
+
+    {%- if section.settings.subheadline != blank -%}
+      <p class="ps-email-signup__subheadline">{{ section.settings.subheadline }}</p>
+    {%- endif -%}
+
+    {% form 'customer', id: 'EmailSignup-{{ section.id }}', class: 'ps-email-signup__form' %}
+      <input type="hidden" name="contact[tags]" value="newsletter, homepage-signup">
+
+      <div class="ps-email-signup__field" data-ps-email-field>
+        <input
+          type="email"
+          name="contact[email]"
+          class="ps-email-signup__input"
+          data-ps-email-input
+          placeholder="{{ 'footer.newsletter_placeholder' | t }}"
+          required
+          autocomplete="email"
+          aria-label="{{ 'footer.newsletter_placeholder' | t }}"
+          pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$"
+        >
+        <button type="submit" class="ps-email-signup__btn" data-ps-email-submit>
+          {{ section.settings.button_text }}
+        </button>
+      </div>
+
+      <p class="ps-email-signup__message ps-email-signup__message--success" data-ps-email-success {% unless form.posted_successfully? %}hidden{% endunless %}>
+        {{ section.settings.success_message }}
+      </p>
+
+      <p class="ps-email-signup__message ps-email-signup__message--error" data-ps-email-error {% unless form.errors %}hidden{% endunless %}>
+        {%- if form.errors -%}
+          {{ form.errors.messages.email | default: 'Please enter a valid email address.' }}
+        {%- else -%}
+          Please enter a valid email address.
+        {%- endif -%}
+      </p>
+    {% endform %}
+  </div>
+</section>
+
+<style>
+  #shopify-section-{{ section.id }} .ps-email-signup {
+    padding: var(--spacing-lg, 48px) 0;
+    color: #ffffff;
+  }
+
+  #shopify-section-{{ section.id }} .ps-email-signup__inner {
+    max-width: 640px;
+    text-align: center;
+  }
+
+  #shopify-section-{{ section.id }} .ps-email-signup__headline {
+    margin: 0 0 12px;
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+    font-weight: 800;
+    line-height: 1.2;
+    color: #ffffff;
+  }
+
+  #shopify-section-{{ section.id }} .ps-email-signup__subheadline {
+    margin: 0 0 28px;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.6;
+  }
+
+  #shopify-section-{{ section.id }} .ps-email-signup__field {
+    display: flex;
+    gap: 0;
+    max-width: 480px;
+    margin: 0 auto;
+    border-radius: var(--border-radius-md, 8px);
+    overflow: hidden;
+    box-shadow: var(--shadow-md, 0 4px 6px rgba(0,0,0,0.15));
+  }
+
+  #shopify-section-{{ section.id }} .ps-email-signup__input {
+    flex: 1;
+    min-width: 0;
+    padding: 14px 16px;
+    border: none;
+    outline: none;
+    font-size: 0.9375rem;
+    color: var(--color-text, #1A1A1A);
+    background: #ffffff;
+  }
+
+  #shopify-section-{{ section.id }} .ps-email-signup__input.is-invalid {
+    box-shadow: inset 0 0 0 2px #ef4444;
+  }
+
+  #shopify-section-{{ section.id }} .ps-email-signup__btn {
+    padding: 14px 24px;
+    background: var(--color-primary, #0F172A);
+    color: #ffffff;
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: background 0.2s ease;
+  }
+
+  #shopify-section-{{ section.id }} .ps-email-signup__btn:hover {
+    background: #1e293b;
+  }
+
+  #shopify-section-{{ section.id }} .ps-email-signup__message {
+    margin-top: 16px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+
+  #shopify-section-{{ section.id }} .ps-email-signup__message--success {
+    color: #ffffff;
+  }
+
+  #shopify-section-{{ section.id }} .ps-email-signup__message--error {
+    color: #fef2f2;
+    background: rgba(239, 68, 68, 0.3);
+    padding: 8px 16px;
+    border-radius: 8px;
+    display: inline-block;
+  }
+
+  #shopify-section-{{ section.id }} .ps-email-signup__message[hidden] {
+    display: none;
+  }
+
+  @media screen and (max-width: 767px) {
+    #shopify-section-{{ section.id }} .ps-email-signup__field {
+      flex-direction: column;
+      border-radius: var(--border-radius-md, 8px);
+    }
+
+    #shopify-section-{{ section.id }} .ps-email-signup__input {
+      border-radius: var(--border-radius-md, 8px) var(--border-radius-md, 8px) 0 0;
+    }
+
+    #shopify-section-{{ section.id }} .ps-email-signup__btn {
+      border-radius: 0 0 var(--border-radius-md, 8px) var(--border-radius-md, 8px);
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    'use strict';
+
+    var section = document.getElementById('shopify-section-{{ section.id }}');
+    if (!section) return;
+
+    var form = section.querySelector('.ps-email-signup__form');
+    var input = section.querySelector('[data-ps-email-input]');
+    var successEl = section.querySelector('[data-ps-email-success]');
+    var errorEl = section.querySelector('[data-ps-email-error]');
+
+    if (!form || !input) return;
+
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    form.addEventListener('submit', function (e) {
+      if (!emailRegex.test(input.value.trim())) {
+        e.preventDefault();
+        input.classList.add('is-invalid');
+        if (errorEl) {
+          errorEl.textContent = 'Please enter a valid email address.';
+          errorEl.hidden = false;
+        }
+        if (successEl) successEl.hidden = true;
+        input.focus();
+      } else {
+        input.classList.remove('is-invalid');
+        if (errorEl) errorEl.hidden = true;
+      }
+    });
+
+    input.addEventListener('input', function () {
+      input.classList.remove('is-invalid');
+      if (errorEl) errorEl.hidden = true;
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Email signup",
+  "tag": "section",
+  "class": "section-email-signup",
+  "settings": [
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Headline",
+      "default": "Get 10% Off Your First Order"
+    },
+    {
+      "type": "text",
+      "id": "subheadline",
+      "label": "Subheadline",
+      "default": "Subscribe for exclusive deals and new arrivals"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#F97316"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Subscribe"
+    },
+    {
+      "type": "text",
+      "id": "success_message",
+      "label": "Success message",
+      "default": "🎉 Welcome to PakStyle! Check your email."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Email signup"
+    }
+  ]
+}
+{% endschema %}

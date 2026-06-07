@@ -1,0 +1,168 @@
+{
+  "sections": {
+    "hero-banner": {
+      "type": "hero-banner",
+      "settings": {
+        "label": "NEW COLLECTION 2026",
+        "headline": "Dress Bold. Live Bold.",
+        "subheadline": "Premium men's clothing delivered across Pakistan",
+        "cta1_text": "Shop Now",
+        "cta1_link": "",
+        "cta2_text": "View Lookbook",
+        "cta2_link": "",
+        "countdown_enabled": true,
+        "countdown_end": "2026-12-31 23:59",
+        "overlay_opacity": 55
+      }
+    },
+    "trust-badges": {
+      "type": "trust-badges",
+      "blocks": {
+        "badge-1": {
+          "type": "badge",
+          "settings": {
+            "icon": "shipping",
+            "title": "Free Shipping",
+            "description": "On orders above PKR 2,500"
+          }
+        },
+        "badge-2": {
+          "type": "badge",
+          "settings": {
+            "icon": "secure",
+            "title": "Secure Payment",
+            "description": "100% safe checkout"
+          }
+        },
+        "badge-3": {
+          "type": "badge",
+          "settings": {
+            "icon": "returns",
+            "title": "Easy Returns",
+            "description": "7 day hassle-free returns"
+          }
+        },
+        "badge-4": {
+          "type": "badge",
+          "settings": {
+            "icon": "quality",
+            "title": "Premium Quality",
+            "description": "Certified materials"
+          }
+        }
+      },
+      "block_order": ["badge-1", "badge-2", "badge-3", "badge-4"],
+      "settings": {
+        "background_color": "#F9FAFB"
+      }
+    },
+    "featured-collection": {
+      "type": "featured-collection",
+      "settings": {
+        "title": "New Arrivals",
+        "collection": "",
+        "products_count": "8",
+        "enable_quick_add": true
+      }
+    },
+    "promotional-banner": {
+      "type": "promotional-banner",
+      "settings": {
+        "headline": "Summer Essentials Are Here",
+        "body_text": "<p>Discover breathable fabrics and bold cuts designed for Pakistan's heat. Limited edition drops — grab yours before they're gone.</p>",
+        "cta_text": "Shop Collection",
+        "cta_link": "",
+        "layout_direction": "image_left",
+        "background_color": "#FFFFFF"
+      }
+    },
+    "testimonials": {
+      "type": "testimonials",
+      "blocks": {
+        "testimonial-1": {
+          "type": "testimonial",
+          "settings": {
+            "review_text": "Amazing quality! The fabric is top notch.",
+            "customer_name": "Ahmed K.",
+            "customer_city": "Lahore",
+            "show_verified": true
+          }
+        },
+        "testimonial-2": {
+          "type": "testimonial",
+          "settings": {
+            "review_text": "Fast delivery and great packaging.",
+            "customer_name": "Usman T.",
+            "customer_city": "Karachi",
+            "show_verified": true
+          }
+        },
+        "testimonial-3": {
+          "type": "testimonial",
+          "settings": {
+            "review_text": "Best casual wear brand in Pakistan!",
+            "customer_name": "Bilal M.",
+            "customer_city": "Islamabad",
+            "show_verified": true
+          }
+        },
+        "testimonial-4": {
+          "type": "testimonial",
+          "settings": {
+            "review_text": "Stylish and comfortable. Will order again.",
+            "customer_name": "Hassan R.",
+            "customer_city": "Peshawar",
+            "show_verified": true
+          }
+        },
+        "testimonial-5": {
+          "type": "testimonial",
+          "settings": {
+            "review_text": "Great value for money. Highly recommend.",
+            "customer_name": "Zain A.",
+            "customer_city": "Abbottabad",
+            "show_verified": true
+          }
+        }
+      },
+      "block_order": [
+        "testimonial-1",
+        "testimonial-2",
+        "testimonial-3",
+        "testimonial-4",
+        "testimonial-5"
+      ],
+      "settings": {
+        "title": "What Our Customers Say",
+        "autoplay_speed": 4000
+      }
+    },
+    "email-signup": {
+      "type": "email-signup",
+      "settings": {
+        "headline": "Get 10% Off Your First Order",
+        "subheadline": "Subscribe for exclusive deals and new arrivals",
+        "background_color": "#F97316",
+        "button_text": "Subscribe",
+        "success_message": "🎉 Welcome to PakStyle! Check your email."
+      }
+    },
+    "instagram-feed": {
+      "type": "instagram-feed",
+      "settings": {
+        "title": "Follow Us @PakStyle",
+        "instagram_handle": "PakStyle",
+        "instagram_url": ""
+      }
+    }
+  },
+  "order": [
+    "hero-banner",
+    "trust-badges",
+    "featured-collection",
+    "promotional-banner",
+    "testimonials",
+    "email-signup",
+    "instagram-feed"
+  ]
+}

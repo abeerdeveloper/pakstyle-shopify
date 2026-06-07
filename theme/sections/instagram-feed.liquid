@@ -1,0 +1,202 @@
+{%- liquid
+  assign handle = section.settings.instagram_handle | default: 'PakStyle'
+  assign ig_url = section.settings.instagram_url | default: 'https://instagram.com/pakstyle'
+-%}
+
+<section id="shopify-section-{{ section.id }}" class="ps-instagram">
+  <div class="container">
+    {%- if section.settings.title != blank -%}
+      <h2 class="ps-instagram__title">
+        {%- assign title_parts = section.settings.title | split: '@' -%}
+        {%- if title_parts.size > 1 -%}
+          {{ title_parts[0] }}@{{ handle }}
+        {%- else -%}
+          {{ section.settings.title }}
+        {%- endif -%}
+      </h2>
+    {%- endif -%}
+
+    <div class="ps-instagram__grid">
+      {%- for i in (1..6) -%}
+        {%- liquid
+          assign image_key = 'image_' | append: i
+          assign image = section.settings[image_key]
+          assign placeholder_id = 100 | plus: i | times: 10
+        -%}
+        <a
+          href="{{ ig_url }}"
+          class="ps-instagram__item"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="View on Instagram"
+        >
+          {%- if image != blank -%}
+            {{
+              image
+              | image_url: width: 400
+              | image_tag:
+                class: 'ps-instagram__img',
+                loading: 'lazy',
+                widths: '200, 300, 400',
+                sizes: '(max-width: 767px) 33vw, 16vw',
+                alt: 'Instagram post'
+            }}
+          {%- else -%}
+            <img
+              class="ps-instagram__img"
+              src="https://picsum.photos/seed/pakstyle{{ i }}/400/400"
+              alt="Instagram placeholder {{ i }}"
+              width="400"
+              height="400"
+              loading="lazy"
+            >
+          {%- endif -%}
+          <div class="ps-instagram__overlay">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="2"/>
+              <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/>
+              <circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>
+            </svg>
+            <span>View on Instagram</span>
+          </div>
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<style>
+  #shopify-section-{{ section.id }} .ps-instagram {
+    padding: var(--spacing-lg, 48px) 0;
+  }
+
+  #shopify-section-{{ section.id }} .ps-instagram__title {
+    margin: 0 0 32px;
+    text-align: center;
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    font-weight: 700;
+    color: var(--color-primary, #0F172A);
+  }
+
+  #shopify-section-{{ section.id }} .ps-instagram__title a {
+    color: var(--color-accent, #F97316);
+  }
+
+  #shopify-section-{{ section.id }} .ps-instagram__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+  }
+
+  #shopify-section-{{ section.id }} .ps-instagram__item {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 4px;
+  }
+
+  #shopify-section-{{ section.id }} .ps-instagram__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  #shopify-section-{{ section.id }} .ps-instagram__overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: rgba(15, 23, 42, 0.65);
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  #shopify-section-{{ section.id }} .ps-instagram__item:hover .ps-instagram__overlay {
+    opacity: 1;
+  }
+
+  #shopify-section-{{ section.id }} .ps-instagram__item:hover .ps-instagram__img {
+    transform: scale(1.08);
+  }
+
+  @media screen and (min-width: 768px) {
+    #shopify-section-{{ section.id }} .ps-instagram__grid {
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Instagram feed",
+  "tag": "section",
+  "class": "section-instagram-feed",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section title",
+      "default": "Follow Us @PakStyle"
+    },
+    {
+      "type": "text",
+      "id": "instagram_handle",
+      "label": "Instagram handle",
+      "default": "PakStyle"
+    },
+    {
+      "type": "url",
+      "id": "instagram_url",
+      "label": "Instagram profile URL"
+    },
+    {
+      "type": "header",
+      "content": "Images"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_1",
+      "label": "Image 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_2",
+      "label": "Image 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_3",
+      "label": "Image 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_4",
+      "label": "Image 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_5",
+      "label": "Image 5"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_6",
+      "label": "Image 6"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Instagram feed"
+    }
+  ]
+}
+{% endschema %}

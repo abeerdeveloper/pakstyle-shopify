@@ -1,0 +1,377 @@
+{%- liquid
+  assign overlay_opacity = section.settings.overlay_opacity | divided_by: 100.0
+-%}
+
+<section
+  id="shopify-section-{{ section.id }}"
+  class="ps-hero"
+  data-ps-hero
+  {% if section.settings.countdown_enabled and section.settings.countdown_end != blank %}
+    data-countdown-end="{{ section.settings.countdown_end }}"
+  {% endif %}
+>
+  <div class="ps-hero__media">
+    {%- if section.settings.background_image != blank -%}
+      {{
+        section.settings.background_image
+        | image_url: width: 2000
+        | image_tag:
+          class: 'ps-hero__img',
+          loading: 'eager',
+          fetchpriority: 'high',
+          widths: '750, 1100, 1500, 2000',
+          sizes: '100vw',
+          alt: section.settings.headline
+      }}
+    {%- else -%}
+      <div class="ps-hero__placeholder"></div>
+    {%- endif -%}
+    <div class="ps-hero__overlay" style="opacity: {{ overlay_opacity }};"></div>
+  </div>
+
+  <div class="container ps-hero__content">
+    {%- if section.settings.label != blank -%}
+      <p class="ps-hero__label">{{ section.settings.label }}</p>
+    {%- endif -%}
+
+    {%- if section.settings.headline != blank -%}
+      <h1 class="ps-hero__headline">{{ section.settings.headline }}</h1>
+    {%- endif -%}
+
+    {%- if section.settings.subheadline != blank -%}
+      <p class="ps-hero__subheadline">{{ section.settings.subheadline }}</p>
+    {%- endif -%}
+
+    {%- if section.settings.countdown_enabled and section.settings.countdown_end != blank -%}
+      <div class="ps-hero__countdown" data-ps-countdown hidden>
+        <div class="ps-hero__countdown-item">
+          <span class="ps-hero__countdown-value" data-countdown-days>00</span>
+          <span class="ps-hero__countdown-label">Days</span>
+        </div>
+        <div class="ps-hero__countdown-item">
+          <span class="ps-hero__countdown-value" data-countdown-hours>00</span>
+          <span class="ps-hero__countdown-label">Hours</span>
+        </div>
+        <div class="ps-hero__countdown-item">
+          <span class="ps-hero__countdown-value" data-countdown-minutes>00</span>
+          <span class="ps-hero__countdown-label">Mins</span>
+        </div>
+        <div class="ps-hero__countdown-item">
+          <span class="ps-hero__countdown-value" data-countdown-seconds>00</span>
+          <span class="ps-hero__countdown-label">Secs</span>
+        </div>
+      </div>
+    {%- endif -%}
+
+    <div class="ps-hero__actions">
+      {%- if section.settings.cta1_text != blank -%}
+        <a href="{{ section.settings.cta1_link | default: routes.all_products_collection_url }}" class="btn btn-primary ps-hero__btn">
+          {{ section.settings.cta1_text }}
+        </a>
+      {%- endif -%}
+      {%- if section.settings.cta2_text != blank -%}
+        <a href="{{ section.settings.cta2_link | default: '#' }}" class="btn btn-secondary ps-hero__btn ps-hero__btn--outline">
+          {{ section.settings.cta2_text }}
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+<style>
+  #shopify-section-{{ section.id }} .ps-hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    min-height: 100svh;
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .ps-hero__media {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  #shopify-section-{{ section.id }} .ps-hero__img,
+  #shopify-section-{{ section.id }} .ps-hero__placeholder {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  #shopify-section-{{ section.id }} .ps-hero__placeholder {
+    background: linear-gradient(135deg, #0F172A 0%, #1e293b 50%, #334155 100%);
+  }
+
+  #shopify-section-{{ section.id }} .ps-hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: #0F172A;
+  }
+
+  #shopify-section-{{ section.id }} .ps-hero__content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 80px 16px;
+    max-width: 800px;
+    animation: psHeroFadeIn 1s ease forwards;
+  }
+
+  @keyframes psHeroFadeIn {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  #shopify-section-{{ section.id }} .ps-hero__label {
+    display: inline-block;
+    margin-bottom: 16px;
+    padding: 6px 16px;
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-accent, #F97316);
+    background: rgba(249, 115, 22, 0.15);
+    border: 1px solid rgba(249, 115, 22, 0.4);
+    border-radius: 999px;
+  }
+
+  #shopify-section-{{ section.id }} .ps-hero__headline {
+    margin-bottom: 16px;
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+    font-size: clamp(2.25rem, 6vw, 4rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    color: #ffffff;
+  }
+
+  #shopify-section-{{ section.id }} .ps-hero__subheadline {
+    margin-bottom: 32px;
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.6;
+  }
+
+  #shopify-section-{{ section.id }} .ps-hero__countdown {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+
+  #shopify-section-{{ section.id }} .ps-hero__countdown-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 64px;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    backdrop-filter: blur(8px);
+  }
+
+  #shopify-section-{{ section.id }} .ps-hero__countdown-value {
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1;
+  }
+
+  #shopify-section-{{ section.id }} .ps-hero__countdown-label {
+    margin-top: 4px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  #shopify-section-{{ section.id }} .ps-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  #shopify-section-{{ section.id }} .ps-hero__btn {
+    min-width: 160px;
+  }
+
+  #shopify-section-{{ section.id }} .ps-hero__btn--outline {
+    background: transparent;
+    color: #ffffff;
+    border-color: #ffffff;
+  }
+
+  #shopify-section-{{ section.id }} .ps-hero__btn--outline:hover {
+    background: #ffffff;
+    color: var(--color-primary, #0F172A);
+  }
+
+  @media screen and (max-width: 767px) {
+    #shopify-section-{{ section.id }} .ps-hero__content {
+      padding: 60px 16px;
+    }
+
+    #shopify-section-{{ section.id }} .ps-hero__actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    #shopify-section-{{ section.id }} .ps-hero__btn {
+      width: 100%;
+    }
+
+    #shopify-section-{{ section.id }} .ps-hero__countdown-item {
+      min-width: 56px;
+      padding: 10px 12px;
+    }
+
+    #shopify-section-{{ section.id }} .ps-hero__countdown-value {
+      font-size: 1.25rem;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    'use strict';
+    var section = document.getElementById('shopify-section-{{ section.id }}');
+    if (!section) return;
+
+    var hero = section.querySelector('[data-ps-hero]');
+    var endDate = hero && hero.dataset.countdownEnd;
+    if (!endDate) return;
+
+    var countdownEl = section.querySelector('[data-ps-countdown]');
+    if (!countdownEl) return;
+
+    var daysEl = section.querySelector('[data-countdown-days]');
+    var hoursEl = section.querySelector('[data-countdown-hours]');
+    var minsEl = section.querySelector('[data-countdown-minutes]');
+    var secsEl = section.querySelector('[data-countdown-seconds]');
+
+    function pad(n) { return n < 10 ? '0' + n : String(n); }
+
+    function tick() {
+      var now = new Date().getTime();
+      var end = new Date(endDate).getTime();
+      var diff = end - now;
+
+      if (diff <= 0) {
+        countdownEl.hidden = true;
+        return;
+      }
+
+      countdownEl.hidden = false;
+      var days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      var hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      var secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+      if (daysEl) daysEl.textContent = pad(days);
+      if (hoursEl) hoursEl.textContent = pad(hours);
+      if (minsEl) minsEl.textContent = pad(mins);
+      if (secsEl) secsEl.textContent = pad(secs);
+    }
+
+    tick();
+    setInterval(tick, 1000);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Hero banner",
+  "tag": "section",
+  "class": "section-hero-banner",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background image"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay opacity",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "default": 55
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Label",
+      "default": "NEW COLLECTION 2026"
+    },
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Headline",
+      "default": "Dress Bold. Live Bold."
+    },
+    {
+      "type": "textarea",
+      "id": "subheadline",
+      "label": "Subheadline",
+      "default": "Premium men's clothing delivered across Pakistan"
+    },
+    {
+      "type": "text",
+      "id": "cta1_text",
+      "label": "Primary button text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "cta1_link",
+      "label": "Primary button link"
+    },
+    {
+      "type": "text",
+      "id": "cta2_text",
+      "label": "Secondary button text",
+      "default": "View Lookbook"
+    },
+    {
+      "type": "url",
+      "id": "cta2_link",
+      "label": "Secondary button link"
+    },
+    {
+      "type": "header",
+      "content": "Countdown timer"
+    },
+    {
+      "type": "checkbox",
+      "id": "countdown_enabled",
+      "label": "Enable countdown timer",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "countdown_end",
+      "label": "Countdown end date",
+      "info": "Format: YYYY-MM-DD or YYYY-MM-DD HH:MM",
+      "default": "2026-12-31 23:59"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero banner"
+    }
+  ]
+}
+{% endschema %}

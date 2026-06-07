@@ -1,0 +1,173 @@
+{%- liquid
+  assign image_right = section.settings.layout_direction == 'image_right'
+-%}
+
+<section id="shopify-section-{{ section.id }}" class="ps-promo" style="background-color: {{ section.settings.background_color }};">
+  <div class="container">
+    <div class="ps-promo__grid{% if image_right %} ps-promo__grid--reverse{% endif %}">
+      <div class="ps-promo__media">
+        {%- if section.settings.image != blank -%}
+          {{
+            section.settings.image
+            | image_url: width: 900
+            | image_tag:
+              class: 'ps-promo__img',
+              loading: 'lazy',
+              widths: '400, 600, 900',
+              sizes: '(max-width: 767px) 100vw, 50vw',
+              alt: section.settings.headline
+          }}
+        {%- else -%}
+          <div class="ps-promo__placeholder"></div>
+        {%- endif -%}
+      </div>
+
+      <div class="ps-promo__content">
+        {%- if section.settings.headline != blank -%}
+          <h2 class="ps-promo__headline">{{ section.settings.headline }}</h2>
+        {%- endif -%}
+
+        {%- if section.settings.body_text != blank -%}
+          <div class="ps-promo__body rte">{{ section.settings.body_text }}</div>
+        {%- endif -%}
+
+        {%- if section.settings.cta_text != blank -%}
+          <a href="{{ section.settings.cta_link | default: '#' }}" class="btn btn-primary ps-promo__cta">
+            {{ section.settings.cta_text }}
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  #shopify-section-{{ section.id }} .ps-promo {
+    padding: var(--spacing-lg, 48px) 0;
+  }
+
+  #shopify-section-{{ section.id }} .ps-promo__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    align-items: center;
+  }
+
+  #shopify-section-{{ section.id }} .ps-promo__media {
+    border-radius: var(--border-radius-lg, 16px);
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .ps-promo__img {
+    width: 100%;
+    height: auto;
+    display: block;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  #shopify-section-{{ section.id }} .ps-promo__placeholder {
+    aspect-ratio: 4 / 3;
+    background: linear-gradient(135deg, #0F172A, #334155);
+    border-radius: var(--border-radius-lg, 16px);
+  }
+
+  #shopify-section-{{ section.id }} .ps-promo__content {
+    padding: 0 8px;
+  }
+
+  #shopify-section-{{ section.id }} .ps-promo__headline {
+    margin: 0 0 16px;
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--color-primary, #0F172A);
+  }
+
+  #shopify-section-{{ section.id }} .ps-promo__body {
+    margin-bottom: 24px;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--color-text-light, #6B7280);
+  }
+
+  #shopify-section-{{ section.id }} .ps-promo__cta {
+    min-width: 180px;
+  }
+
+  @media screen and (min-width: 768px) {
+    #shopify-section-{{ section.id }} .ps-promo__grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+    }
+
+    #shopify-section-{{ section.id }} .ps-promo__grid--reverse .ps-promo__media {
+      order: 2;
+    }
+
+    #shopify-section-{{ section.id }} .ps-promo__grid--reverse .ps-promo__content {
+      order: 1;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Promotional banner",
+  "tag": "section",
+  "class": "section-promotional-banner",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Headline",
+      "default": "Summer Essentials Are Here"
+    },
+    {
+      "type": "richtext",
+      "id": "body_text",
+      "label": "Body text",
+      "default": "<p>Discover breathable fabrics and bold cuts designed for Pakistan's heat. Limited edition drops — grab yours before they're gone.</p>"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Button text",
+      "default": "Shop Collection"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Button link"
+    },
+    {
+      "type": "select",
+      "id": "layout_direction",
+      "label": "Layout direction",
+      "options": [
+        { "value": "image_left", "label": "Image left, text right" },
+        { "value": "image_right", "label": "Image right, text left" }
+      ],
+      "default": "image_left"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#FFFFFF"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Promotional banner"
+    }
+  ]
+}
+{% endschema %}

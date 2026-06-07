@@ -23,6 +23,9 @@
   "products": {
     "product": "Product",
     "add_to_cart": "Add to cart",
+    "quick_add": "Quick Add",
+    "add_to_wishlist": "Add to wishlist",
+    "select_size": "Select size",
     "sold_out": "Sold out",
     "unavailable": "Unavailable",
     "quantity": "Quantity",
