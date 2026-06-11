@@ -4,9 +4,9 @@ A fully custom enterprise-grade Shopify store built from scratch.
 Built by Abeer Awan — Frontend & Shopify Developer
 
 ## Live Links
-- 🛍️ Shopify Theme: pakstyle-dev.myshopify.com
-- 🌐 Headless Frontend: [Vercel URL - add after deploy]
-- 📦 GitHub: github.com/abeerdeveloper/pakstyle-shopify
+- 🌐 Headless Frontend: https://pakstyle-store-nine.vercel.app
+- 🛍️ Shopify Theme: https://pakstyle-dev.myshopify.com/?preview_theme_id=152135794871
+- 📦 GitHub: https://github.com/abeerdeveloper/pakstyle-shopify
 
 ## What Was Built
 PakStyle is a complete end-to-end Shopify project with a native theme, a headless storefront, and a custom admin application. The project spans 13 phases, including theme design, custom storefront experience, backend tools, and deployment automation.
