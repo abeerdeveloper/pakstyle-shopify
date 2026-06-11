@@ -1,114 +1,118 @@
 <div class="page-contact">
-  <div class="container page-contact__container">
-    <div class="page-contact__header">
-      <h1 class="page-contact__title">{{ page.title }}</h1>
-      <p class="page-contact__subtitle">We'd love to hear from you. Drop us a message anytime!</p>
+  <div class="page-contact__banner">
+    <div class="page-contact__banner-inner">
+      <p class="page-contact__breadcrumb"><a href="{{ routes.root_url }}">Home</a> › Contact</p>
+      <h1 class="page-contact__banner-title">Contact</h1>
     </div>
+  </div>
 
-    <div class="page-contact__grid">
-      <!-- Contact Form -->
-      <div class="page-contact__form-wrapper">
-        <form method="POST" action="/contact" class="page-contact__form" accept-charset="UTF-8">
-          <input type="hidden" name="form_type" value="contact">
-          <input type="hidden" name="utf8" value="✓">
+  <div class="page-contact__main">
+    <div class="page-contact__wrapper">
+      <div class="page-contact__columns">
+        <div class="page-contact__column page-contact__column--form">
+          <div class="page-contact__form-card">
+            <form method="POST" action="/contact" class="page-contact__form" accept-charset="UTF-8">
+              <input type="hidden" name="form_type" value="contact">
+              <input type="hidden" name="utf8" value="✓">
 
-          <div class="form-group">
-            <label for="ContactFormName" class="form-label">Name</label>
-            <input
-              type="text"
-              id="ContactFormName"
-              class="form-input"
-              name="contact[name]"
-              placeholder="Your full name"
-              required
-              autocomplete="name"
-            >
-          </div>
+              <div class="form-group">
+                <label for="ContactFormName" class="form-label">Name</label>
+                <input
+                  type="text"
+                  id="ContactFormName"
+                  class="form-input"
+                  name="contact[name]"
+                  placeholder="Your full name"
+                  required
+                  autocomplete="name"
+                >
+              </div>
 
-          <div class="form-group">
-            <label for="ContactFormEmail" class="form-label">Email</label>
-            <input
-              type="email"
-              id="ContactFormEmail"
-              class="form-input"
-              name="contact[email]"
-              placeholder="your@email.com"
-              required
-              autocomplete="email"
-            >
-          </div>
+              <div class="form-group">
+                <label for="ContactFormEmail" class="form-label">Email</label>
+                <input
+                  type="email"
+                  id="ContactFormEmail"
+                  class="form-input"
+                  name="contact[email]"
+                  placeholder="you@example.com"
+                  required
+                  autocomplete="email"
+                >
+              </div>
 
-          <div class="form-group">
-            <label for="ContactFormPhone" class="form-label">Phone</label>
-            <input
-              type="tel"
-              id="ContactFormPhone"
-              class="form-input"
-              name="contact[body]"
-              placeholder="+92 300 0000000"
-              autocomplete="tel"
-            >
-          </div>
+              <div class="form-group">
+                <label for="ContactFormPhone" class="form-label">Phone</label>
+                <input
+                  type="tel"
+                  id="ContactFormPhone"
+                  class="form-input"
+                  name="contact[phone]"
+                  placeholder="+92 300 0000000"
+                  autocomplete="tel"
+                >
+              </div>
 
-          <div class="form-group">
-            <label for="ContactFormMessage" class="form-label">Message</label>
-            <textarea
-              id="ContactFormMessage"
-              class="form-input form-input--textarea"
-              name="contact[body]"
-              placeholder="Tell us more about your inquiry..."
-              rows="6"
-              required
-            ></textarea>
-          </div>
+              <div class="form-group">
+                <label for="ContactFormMessage" class="form-label">Message</label>
+                <textarea
+                  id="ContactFormMessage"
+                  class="form-input form-input--textarea"
+                  name="contact[body]"
+                  placeholder="Tell us more about your inquiry..."
+                  rows="6"
+                  required
+                ></textarea>
+              </div>
 
-          <button type="submit" class="page-contact__submit">Send Message</button>
-        </form>
-      </div>
-
-      <!-- Contact Info -->
-      <div class="page-contact__info">
-        <div class="page-contact__info-box">
-          <h3 class="page-contact__info-title">Get in Touch</h3>
-
-          <div class="page-contact__info-item">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-              <path d="m20 6-8 5-8-5" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-            </svg>
-            <div>
-              <div class="page-contact__info-label">Email</div>
-              <a href="mailto:info@pakstyle.pk" class="page-contact__info-link">info@pakstyle.pk</a>
-            </div>
-          </div>
-
-          <div class="page-contact__info-item">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-            </svg>
-            <div>
-              <div class="page-contact__info-label">Phone</div>
-              <a href="tel:+923000000000" class="page-contact__info-link">+92 300 0000000</a>
-            </div>
-          </div>
-
-          <div class="page-contact__info-item">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-              <circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2"/>
-            </svg>
-            <div>
-              <div class="page-contact__info-label">Location</div>
-              <div class="page-contact__info-text">Abbottabad, Pakistan</div>
-            </div>
+              <button type="submit" class="page-contact__submit">Send Message</button>
+            </form>
           </div>
         </div>
 
-        <div class="page-contact__hours">
-          <h4 class="page-contact__hours-title">Business Hours</h4>
-          <p class="page-contact__hours-text">Monday - Friday: 9:00 AM - 6:00 PM</p>
-          <p class="page-contact__hours-text">Saturday: 10:00 AM - 4:00 PM</p>
-          <p class="page-contact__hours-text">Sunday: Closed</p>
+        <div class="page-contact__column page-contact__column--info">
+          <div class="page-contact__info-card">
+            <h3 class="page-contact__info-heading">Get in Touch</h3>
+
+            <div class="page-contact__info-item">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                <path d="m20 6-8 5-8-5" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              </svg>
+              <div>
+                <div class="page-contact__info-label">Email</div>
+                <a href="mailto:info@pakstyle.pk" class="page-contact__info-link">info@pakstyle.pk</a>
+              </div>
+            </div>
+
+            <div class="page-contact__info-item">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              </svg>
+              <div>
+                <div class="page-contact__info-label">Phone</div>
+                <a href="tel:+923000000000" class="page-contact__info-link">+92 300 0000000</a>
+              </div>
+            </div>
+
+            <div class="page-contact__info-item">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                <circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              <div>
+                <div class="page-contact__info-label">Location</div>
+                <div class="page-contact__info-text">Abbottabad, Pakistan</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="page-contact__hours-card">
+            <h4 class="page-contact__hours-heading">Business Hours</h4>
+            <p class="page-contact__hours-text">Monday - Friday: 9:00 AM - 6:00 PM</p>
+            <p class="page-contact__hours-text">Saturday: 10:00 AM - 4:00 PM</p>
+            <p class="page-contact__hours-text">Sunday: Closed</p>
+          </div>
         </div>
       </div>
     </div>
@@ -117,137 +121,162 @@
 
 <style>
   .page-contact {
-    padding: 60px 0;
-    background: linear-gradient(135deg, #0F172A 0%, #1e293b 100%);
-    min-height: 100vh;
-  }
-
-  .page-contact__container {
-    max-width: 1000px;
-    margin: 0 auto;
-  }
-
-  .page-contact__header {
-    text-align: center;
-    margin-bottom: 48px;
-  }
-
-  .page-contact__title {
-    font-size: 2.5rem;
-    font-weight: 800;
-    color: #FFFFFF;
-    margin: 0 0 12px;
-    letter-spacing: -0.02em;
-  }
-
-  .page-contact__subtitle {
-    font-size: 1.125rem;
-    color: #CBD5E1;
-    margin: 0;
-  }
-
-  .page-contact__grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 48px;
-    align-items: start;
-  }
-
-  @media (max-width: 767px) {
-    .page-contact__grid {
-      grid-template-columns: 1fr;
-      gap: 36px;
-    }
-  }
-
-  .page-contact__form-wrapper {
     background: #FFFFFF;
-    padding: 32px;
-    border-radius: 16px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   }
 
-  .page-contact__info {
+  .page-contact__banner {
+    background: linear-gradient(135deg, #0F172A 0%, #1e293b 100%);
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+  }
+
+  .page-contact__banner-inner {
+    max-width: 1100px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 24px;
+    text-align: center;
+  }
+
+  .page-contact__breadcrumb {
+    margin: 0 0 12px;
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 0.95rem;
+  }
+
+  .page-contact__breadcrumb a {
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+  }
+
+  .page-contact__banner-title {
+    margin: 0;
+    color: #FFFFFF;
+    font-size: 3rem;
+    font-weight: 800;
+  }
+
+  .page-contact__main {
+    padding: 60px 0;
+    background: #FFFFFF;
+  }
+
+  .page-contact__wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  .page-contact__columns {
+    display: flex;
+    gap: 24px;
+    align-items: stretch;
+  }
+
+  .page-contact__column {
+    width: 100%;
+  }
+
+  .page-contact__column--form {
+    flex: 0 0 60%;
+  }
+
+  .page-contact__column--info {
+    flex: 0 0 40%;
     display: flex;
     flex-direction: column;
     gap: 20px;
   }
 
+  .page-contact__form-card {
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+    height: 100%;
+  }
+
+  .page-contact__form {
+    display: grid;
+    gap: 20px;
+  }
+
   .form-group {
-    margin-bottom: 20px;
+    margin: 0;
   }
 
   .form-label {
     display: block;
+    margin-bottom: 10px;
     font-size: 0.95rem;
     font-weight: 600;
     color: #0F172A;
-    margin-bottom: 8px;
   }
 
   .form-input {
     width: 100%;
-    padding: 12px 14px;
-    border: 1px solid #D1D5DB;
-    border-radius: 8px;
+    padding: 14px 16px;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
     font-size: 1rem;
     font-family: inherit;
     background: #FFFFFF;
     color: #0F172A;
-    transition: border-color 0.2s;
   }
 
   .form-input:focus {
     outline: none;
     border-color: #F97316;
-    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+    box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.12);
   }
 
   .form-input--textarea {
+    min-height: 160px;
     resize: vertical;
-    min-height: 120px;
   }
 
   .page-contact__submit {
     width: 100%;
-    padding: 14px 24px;
+    padding: 16px 22px;
     background: #F97316;
     color: #FFFFFF;
     border: none;
-    border-radius: 8px;
+    border-radius: 12px;
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background 0.2s ease;
   }
 
   .page-contact__submit:hover {
-    background: #EA580C;
+    background: #ea580c;
   }
 
-  .page-contact__submit:active {
-    transform: scale(0.98);
-  }
-
-  .page-contact__info-box {
-    background: #1e293b;
+  .page-contact__info-card,
+  .page-contact__hours-card {
+    background: #0F172A;
     color: #FFFFFF;
-    padding: 32px;
-    border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    border-radius: 16px;
+    padding: 30px;
+    min-height: 240px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
   }
 
-  .page-contact__info-title {
+  .page-contact__info-heading,
+  .page-contact__hours-heading {
+    margin: 0;
+    color: #FFFFFF;
     font-size: 1.5rem;
     font-weight: 700;
-    margin: 0 0 28px;
-    color: #FFFFFF;
   }
 
   .page-contact__info-item {
     display: flex;
     gap: 16px;
-    margin-bottom: 24px;
     align-items: flex-start;
   }
 
@@ -258,46 +287,41 @@
   }
 
   .page-contact__info-label {
-    font-size: 0.875rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: #CBD5E1;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
   }
 
-  .page-contact__info-link {
+  .page-contact__info-link,
+  .page-contact__info-text {
     font-size: 1rem;
     color: #FFFFFF;
     text-decoration: none;
-    transition: color 0.2s;
   }
 
   .page-contact__info-link:hover {
     color: #F97316;
   }
 
-  .page-contact__info-text {
-    font-size: 1rem;
-    color: #FFFFFF;
-  }
-
-  .page-contact__hours {
-    background: #1e293b;
-    padding: 24px;
-    border-radius: 12px;
+  .page-contact__hours-card {
     border-left: 4px solid #F97316;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-  }
-
-  .page-contact__hours-title {
-    font-size: 1rem;
-    font-weight: 700;
-    color: #FFFFFF;
-    margin: 0 0 12px;
   }
 
   .page-contact__hours-text {
     font-size: 0.95rem;
     color: #CBD5E1;
-    margin: 6px 0;
+    margin: 0;
+  }
+
+  @media (max-width: 1024px) {
+    .page-contact__columns {
+      flex-direction: column;
+    }
+
+    .page-contact__column--form,
+    .page-contact__column--info {
+      flex: 1 1 100%;
+    }
   }
 </style>
