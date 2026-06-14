@@ -9,24 +9,19 @@ export default async function HomePage(){
 
   return (
     <div className="container">
-      <section className="py-12 text-center">
-        <h1 className="text-4xl font-bold" style={{color:'var(--primary)'}}>Dress Bold. Live Bold.</h1>
-        <p className="mt-4 text-gray-600">PakStyle — curated clothing for fearless living.</p>
+      <section style={{background:'linear-gradient(135deg, #0F172A 0%, #1F2937 100%)',borderRadius:24,padding:'80px 32px',marginBottom:40}}>
+        <div style={{maxWidth:700,margin:'0 auto',textAlign:'center'}}>
+          <h1 style={{color:'#FFFFFF',fontFamily:'var(--font-heading)',fontSize:56,fontWeight:800,margin:0,lineHeight:1.05}}>Dress Bold. Live Bold.</h1>
+          <p style={{color:'#E5E7EB',fontSize:18,marginTop:20}}>PakStyle curates fearlessly bold apparel for every modern wardrobe.</p>
+        </div>
       </section>
 
       <section>
-        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h2 className="text-2xl font-semibold">Featured Products</h2>
-            <p className="text-sm text-gray-500 mt-2">Showing the first four items from Shopify's default test catalog. Real apparel products will replace this inventory soon.</p>
-          </div>
+        <div style={{marginBottom:24,display:'flex',flexDirection:'column',gap:12}}>
+          <h2 style={{fontFamily:'var(--font-heading)',fontSize:32,color:'#0F172A',margin:0}}>Featured Products</h2>
+          <p style={{color:'#4B5563',fontSize:16,margin:0}}>Showing the first four items from Shopify's test catalog for now. Real clothing products are coming soon.</p>
         </div>
         <ProductGrid products={products} />
-      </section>
-
-      <section className="mt-12 p-8 rounded-lg" style={{background:'#0F172A',color:'#fff'}}>
-        <h3 className="text-2xl">Join the movement</h3>
-        <p className="mt-2">Sign up for early drops and exclusive offers.</p>
       </section>
     </div>
   );
