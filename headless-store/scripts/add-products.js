@@ -13,7 +13,7 @@ if (!process.env.SHOPIFY_STORE_DOMAIN || !token) {
 const products = [
   {
     title: 'Classic Bomber Jacket',
-    bodyHtml: 'Premium bomber jacket for the modern man. Bold style, all-day comfort.',
+    descriptionHtml: 'Premium bomber jacket for the modern man. Bold style, all-day comfort.',
     price: '4500',
     imageUrl: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800',
     tags: ['jackets', 'new-arrival'],
@@ -21,7 +21,7 @@ const products = [
   },
   {
     title: 'Essential Crew Tee',
-    bodyHtml: 'Soft cotton crew neck t-shirt. A wardrobe essential.',
+    descriptionHtml: 'Soft cotton crew neck t-shirt. A wardrobe essential.',
     price: '1200',
     imageUrl: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800',
     tags: ['t-shirts', 'essentials'],
@@ -29,7 +29,7 @@ const products = [
   },
   {
     title: 'Slim Fit Denim Jeans',
-    bodyHtml: 'Slim fit denim jeans with a modern silhouette.',
+    descriptionHtml: 'Slim fit denim jeans with a modern silhouette.',
     price: '3200',
     imageUrl: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=800',
     tags: ['jeans', 'denim'],
@@ -37,7 +37,7 @@ const products = [
   },
   {
     title: 'Urban Hoodie',
-    bodyHtml: 'Cozy oversized hoodie for street style comfort.',
+    descriptionHtml: 'Cozy oversized hoodie for street style comfort.',
     price: '2800',
     imageUrl: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800',
     tags: ['hoodies', 'streetwear'],
@@ -66,7 +66,14 @@ async function fetchGraphQL(query, variables = {}) {
 
 const productCreateMutation = `mutation productCreate($input: ProductInput!) {
   productCreate(input: $input) {
-    product { id title handle status }
+    product { id title }
+    userErrors { field message }
+  }
+}`;
+
+const productVariantsBulkCreateMutation = `mutation productVariantsBulkCreate($productId: ID!, $variants: [ProductVariantsBulkInput!]!) {
+  productVariantsBulkCreate(productId: $productId, variants: $variants) {
+    productVariants { id title price }
     userErrors { field message }
   }
 }`;
@@ -81,18 +88,28 @@ const productCreateMediaMutation = `mutation productCreateMedia($productId: ID!,
 function buildProductInput(product) {
   return {
     title: product.title,
-    bodyHtml: product.bodyHtml,
+    descriptionHtml: product.descriptionHtml,
     tags: product.tags,
     status: product.status,
-    variants: variantSizes.map((size) => ({
-      title: size,
-      price: product.price,
-      sku: `${product.title.toLowerCase().replace(/\s+/g, '-')}-${size.toLowerCase()}`,
-      inventoryPolicy: 'CONTINUE',
-      inventoryManagement: 'SHOPIFY',
-      availableForSale: true,
-    })),
+    productOptions: [
+      {
+        name: 'Size',
+        values: variantSizes.map((size) => ({ name: size })),
+      },
+    ],
   };
+}
+
+function buildVariantInputs(product) {
+  return variantSizes.map((size) => ({
+    price: product.price,
+    optionValues: [
+      {
+        optionName: 'Size',
+        name: size,
+      },
+    ],
+  }));
 }
 
 async function createProduct(product) {
@@ -105,6 +122,18 @@ async function createProduct(product) {
   }
 
   return result.product;
+}
+
+async function createProductVariants(productId, product) {
+  const variants = buildVariantInputs(product);
+  const data = await fetchGraphQL(productVariantsBulkCreateMutation, { productId, variants });
+  const result = data.productVariantsBulkCreate;
+
+  if (result.userErrors?.length) {
+    throw new Error(`Failed to create variants for product ${productId}: ${JSON.stringify(result.userErrors)}`);
+  }
+
+  return result.productVariants;
 }
 
 async function attachProductImage(productId, imageUrl) {
@@ -130,6 +159,9 @@ async function attachProductImage(productId, imageUrl) {
     try {
       const createdProduct = await createProduct(product);
       console.log(`Created product: ${createdProduct.title} (${createdProduct.id})`);
+
+      const variants = await createProductVariants(createdProduct.id, product);
+      console.log(`  Created ${variants.length} variants.`);
 
       const media = await attachProductImage(createdProduct.id, product.imageUrl);
       console.log(`  Attached image media: ${media.id}`);
