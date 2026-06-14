@@ -6,9 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "add-products": "node scripts/add-products.js"
   },
   "dependencies": {
+    "dotenv": "^17.4.2",
     "lucide-react": "^1.18.0",
     "next": "^14.2.35",
     "react": "^18.2.0",
