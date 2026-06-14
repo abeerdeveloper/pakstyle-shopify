@@ -17,6 +17,9 @@ export default function Footer(){
       </div>
       <div className="container" style={{borderTop:'1px solid rgba(255,255,255,0.05)',marginTop:18,paddingTop:12}}>
         © {new Date().getFullYear()} PakStyle
+        <div style={{marginTop:8,fontSize:12,color:'rgba(255,255,255,0.72)',textAlign:'center'}}>
+          Built with ❤️ by <a href="https://github.com/abeerdeveloper" style={{color:'#fff',textDecoration:'underline'}}>Abeer Dev</a>
+        </div>
       </div>
     </footer>
   );

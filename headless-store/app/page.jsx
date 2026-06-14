@@ -3,7 +3,8 @@ import { getProducts } from '../lib/queries';
 import ProductGrid from '../components/ProductGrid';
 
 export default async function HomePage(){
-  const res = await shopifyFetch({ query: getProducts, variables: { first: 8 } });
+  // The current storefront is using Shopify's default test catalog data until real clothing products are added.
+  const res = await shopifyFetch({ query: getProducts, variables: { first: 4 } });
   const products = res?.data?.products?.edges?.map(e=>e.node) || [];
 
   return (
@@ -14,7 +15,12 @@ export default async function HomePage(){
       </section>
 
       <section>
-        <h2 className="text-2xl font-semibold mb-4">Featured Products</h2>
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h2 className="text-2xl font-semibold">Featured Products</h2>
+            <p className="text-sm text-gray-500 mt-2">Showing the first four items from Shopify's default test catalog. Real apparel products will replace this inventory soon.</p>
+          </div>
+        </div>
         <ProductGrid products={products} />
       </section>
 
