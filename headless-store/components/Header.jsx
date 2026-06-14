@@ -1,22 +1,23 @@
 'use client';
 import Link from 'next/link';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { Search, Heart, User, ShoppingCart } from 'lucide-react';
 import { CartContext } from '../context/CartContext';
 
-const iconStyle = {
+const iconButtonStyle = {
+  background: 'none',
+  border: 'none',
+  padding: 0,
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
   color: '#111827',
   cursor: 'pointer',
   transition: 'color 160ms ease',
 };
 
-const iconHover = {
-  color: '#F97316',
-};
-
 export default function Header(){
   const { itemCount } = useContext(CartContext);
-  const [searchOpen, setSearchOpen] = useState(false);
 
   return (
     <header style={{background:'#FFFFFF', borderBottom:'1px solid #E5E7EB', boxShadow:'0 1px 4px rgba(15, 23, 42, 0.08)'}}>
@@ -30,17 +31,17 @@ export default function Header(){
         </nav>
 
         <div style={{display:'flex',gap:18,alignItems:'center'}}>
-          <button onClick={() => setSearchOpen(!searchOpen)} style={{background:'none',border:'none',padding:0}}>
-            <Search size={20} style={iconStyle} onMouseOver={e => e.currentTarget.style.color = '#F97316'} onMouseOut={e => e.currentTarget.style.color = '#111827'} />
-          </button>
-          <Link href="/wishlist" style={{display:'inline-flex'}}>
-            <Heart size={20} style={iconStyle} onMouseOver={e => e.currentTarget.style.color = '#F97316'} onMouseOut={e => e.currentTarget.style.color = '#111827'} />
+          <Link href="/search" style={iconButtonStyle}>
+            <Search size={20} color="currentColor" />
           </Link>
-          <Link href="/account" style={{display:'inline-flex'}}>
-            <User size={20} style={iconStyle} onMouseOver={e => e.currentTarget.style.color = '#F97316'} onMouseOut={e => e.currentTarget.style.color = '#111827'} />
+          <Link href="/wishlist" style={iconButtonStyle}>
+            <Heart size={20} color="currentColor" />
           </Link>
-          <Link href="/cart" style={{position:'relative',display:'inline-flex'}}>
-            <ShoppingCart size={20} style={iconStyle} onMouseOver={e => e.currentTarget.style.color = '#F97316'} onMouseOut={e => e.currentTarget.style.color = '#111827'} />
+          <a href="https://pakstyle-dev.myshopify.com/account" target="_blank" rel="noreferrer" style={iconButtonStyle}>
+            <User size={20} color="currentColor" />
+          </a>
+          <Link href="/cart" style={{position:'relative',display:'inline-flex',alignItems:'center',justifyContent:'center'}}>
+            <ShoppingCart size={20} color="#111827" />
             {itemCount > 0 && (
               <span style={{position:'absolute',top:-8,right:-10,height:18,width:18,borderRadius:9999,background:'#111827',color:'#FFFFFF',fontSize:10,display:'flex',alignItems:'center',justifyContent:'center'}}>{itemCount}</span>
             )}
