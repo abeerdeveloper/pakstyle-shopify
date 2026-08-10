@@ -26,10 +26,12 @@ export default function ProductCard({ product }){
           </div>
         )}
       </Link>
-      <div style={{padding:20}}>
+      <div style={{padding:20,display:'flex',flexDirection:'column',flex:1}}>
         <div className="product-card-title">{product.title}</div>
         <div className="product-card-price">{price} {currency}</div>
-        <button className="product-card-button" onClick={()=>addItem(product.variants.edges[0].node.id,1)}>Add to Cart</button>
+        <div style={{marginTop:'auto'}}>
+          <button className="product-card-button" onClick={()=>addItem(product.variants.edges[0].node.id,1)}>Add to Cart</button>
+        </div>
       </div>
     </div>
   );

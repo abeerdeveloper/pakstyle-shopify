@@ -61,6 +61,8 @@ button, input, textarea, select {
   border-radius: 12px;
   overflow: hidden;
   transition: transform 180ms ease, box-shadow 180ms ease;
+  display: flex;
+  flex-direction: column;
 }
 
 .product-card:hover {
