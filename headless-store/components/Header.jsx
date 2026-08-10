@@ -2,12 +2,13 @@
 import Link from 'next/link';
 import { useContext, useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, Heart, User, ShoppingCart, X } from 'lucide-react';
+import { Search, Heart, User, ShoppingCart, X, Menu } from 'lucide-react';
 import { CartContext } from '../context/CartContext';
 
 export default function Header(){
   const { itemCount } = useContext(CartContext);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [query, setQuery] = useState('');
   const inputRef = useRef(null);
   const router = useRouter();
@@ -36,36 +37,54 @@ export default function Header(){
   };
 
   return (
-    <header style={{background:'#FFFFFF', borderBottom:'1px solid #E5E7EB', boxShadow:'0 1px 4px rgba(15, 23, 42, 0.08)'}}>
-      <div className="container" style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'16px 0'}}>
-        <Link href="/" style={{fontWeight:700,fontSize:22,color:'#111827',fontFamily:'Poppins, system-ui, sans-serif',textDecoration:'none'}}>PakStyle</Link>
+    <header className="site-header">
+      <div className="container header-inner">
+        <Link href="/" className="header-logo-link">
+          <img src="/pakstyle-logo.png" alt="PakStyle" className="header-logo" />
+        </Link>
 
-        <nav style={{display:'flex',gap:24,alignItems:'center',color:'#111827',fontSize:14,fontWeight:500}}>
-          <Link href="/" style={{color:'#111827',textDecoration:'none'}}>Home</Link>
-          <Link href="/products" style={{color:'#111827',textDecoration:'none'}}>Catalog</Link>
-          <Link href="/contact" style={{color:'#111827',textDecoration:'none'}}>Contact</Link>
+        <nav className="header-nav desktop-only">
+          <Link href="/" className="nav-link">Home</Link>
+          <Link href="/products" className="nav-link">Catalog</Link>
+          <Link href="/contact" className="nav-link">Contact</Link>
         </nav>
 
-        <div style={{display:'flex',gap:18,alignItems:'center'}}>
-          <button onClick={toggleSearch} type="button" style={{background:'none',border:'none',padding:0,display:'inline-flex',alignItems:'center',justifyContent:'center',color:'#111827',cursor:'pointer',transition:'color 160ms ease'}}>
+        <div className="header-actions">
+          <button onClick={toggleSearch} type="button" className="header-icon-btn" aria-label="Search">
             <Search size={20} />
           </button>
-          <Link href="/wishlist" style={{display:'inline-flex',color:'#111827',transition:'color 160ms ease'}}>
+          <Link href="/wishlist" className="header-icon-btn desktop-only" aria-label="Wishlist">
             <Heart size={20} />
           </Link>
-          <a href="https://pakstyle-dev.myshopify.com/account" target="_blank" rel="noreferrer" style={{display:'inline-flex',color:'#111827',transition:'color 160ms ease'}}>
-            <User size={20} />
-          </a>
-          <Link href="/cart" style={{position:'relative',display:'inline-flex',alignItems:'center',justifyContent:'center',color:'#111827'}}>
+          <Link href="/cart" className="header-icon-btn cart-icon" aria-label="Cart">
             <ShoppingCart size={20} />
             {itemCount > 0 && (
-              <span style={{position:'absolute',top:-8,right:-10,height:18,width:18,borderRadius:9999,background:'#111827',color:'#FFFFFF',fontSize:10,display:'flex',alignItems:'center',justifyContent:'center'}}>{itemCount}</span>
+              <span className="cart-badge">{itemCount}</span>
             )}
           </Link>
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            type="button"
+            className="header-icon-btn mobile-only"
+            aria-label="Menu"
+          >
+            {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+          </button>
         </div>
       </div>
 
-      <div style={{maxHeight: searchOpen ? 140 : 0, opacity: searchOpen ? 1 : 0, overflow: 'hidden', transition: 'max-height 220ms ease, opacity 220ms ease', borderBottom: searchOpen ? '1px solid #E5E7EB' : 'none', background: '#FFFFFF'}}>
+      {/* Mobile Menu */}
+      <div className={`mobile-menu ${mobileMenuOpen ? 'mobile-menu-open' : ''}`}>
+        <nav className="mobile-nav">
+          <Link href="/" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>Home</Link>
+          <Link href="/products" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>Catalog</Link>
+          <Link href="/contact" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>Contact</Link>
+          <Link href="/wishlist" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>Wishlist</Link>
+        </nav>
+      </div>
+
+      {/* Search Drawer */}
+      <div className={`search-drawer ${searchOpen ? 'search-drawer-open' : ''}`}>
         <form onSubmit={handleSubmit} style={{padding:'20px 0'}}>
           <div className="container" style={{display:'flex',gap:12,alignItems:'center'}}>
             <div style={{position:'relative',flex:1}}>
@@ -77,11 +96,11 @@ export default function Header(){
                 onKeyDown={handleKeyDown}
                 placeholder="Search for products..."
                 aria-label="Search products"
-                style={{width:'100%',padding:'16px 16px 16px 44px',border:'1px solid #E5E7EB',borderRadius:12,fontSize:16,fontFamily:'var(--font-body)',outline:'none'}}
+                className="search-input"
               />
             </div>
-            <button type="submit" style={{background:'#F97316',color:'#FFFFFF',border:'none',borderRadius:12,padding:'16px 24px',fontWeight:700,cursor:'pointer',fontFamily:'var(--font-heading)'}}>Search</button>
-            <button type="button" onClick={closeSearch} style={{background:'none',border:'none',padding:0,display:'inline-flex',alignItems:'center',justifyContent:'center',color:'#111827',cursor:'pointer'}}>
+            <button type="submit" className="search-submit-btn">Search</button>
+            <button type="button" onClick={closeSearch} className="header-icon-btn">
               <X size={20} />
             </button>
           </div>
