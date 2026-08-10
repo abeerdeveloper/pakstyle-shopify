@@ -6,7 +6,9 @@ import { CartContext } from '../context/CartContext';
 export default function ProductCard({ product }){
   const { addItem } = useContext(CartContext);
   const [imageError, setImageError] = useState(false);
-  const img = product.images?.edges?.[0]?.node?.url;
+  
+  // Prefer localImage (PakStyle catalog), then Shopify image
+  const img = product.localImage || product.images?.edges?.[0]?.node?.url;
   const price = product.priceRange?.minVariantPrice?.amount;
   const currency = product.priceRange?.minVariantPrice?.currencyCode;
 

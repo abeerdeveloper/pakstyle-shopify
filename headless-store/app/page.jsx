@@ -1,11 +1,8 @@
-import { shopifyFetch } from '../lib/shopify';
-import { getProducts } from '../lib/queries';
+import { getPakstyleProducts } from '../lib/pakstyle-products';
 import ProductGrid from '../components/ProductGrid';
 
 export default async function HomePage(){
-  // The current storefront is using Shopify's default test catalog data until real clothing products are added.
-  const res = await shopifyFetch({ query: getProducts, variables: { first: 4 } });
-  const products = res?.data?.products?.edges?.map(e=>e.node) || [];
+  const products = getPakstyleProducts(4);
 
   return (
     <div className="container">
@@ -19,7 +16,7 @@ export default async function HomePage(){
       <section>
         <div style={{marginBottom:24,display:'flex',flexDirection:'column',gap:12}}>
           <h2 style={{fontFamily:'var(--font-heading)',fontSize:32,color:'#0F172A',margin:0}}>Featured Products</h2>
-          <p style={{color:'#4B5563',fontSize:16,margin:0}}>Showing the first four items from Shopify's test catalog for now. Real clothing products are coming soon.</p>
+          <p style={{color:'#4B5563',fontSize:16,margin:0}}>Discover our latest collection blending Pakistani heritage with modern streetwear.</p>
         </div>
         <ProductGrid products={products} />
       </section>
