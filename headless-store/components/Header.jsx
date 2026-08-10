@@ -40,7 +40,7 @@ export default function Header(){
     <header className="site-header">
       <div className="container header-inner">
         <Link href="/" className="header-logo-link">
-          <img src="/pakstyle-logo.png" alt="PakStyle" className="header-logo" />
+          <img src="/pakstyle-logo.svg" alt="PakStyle" className="header-logo" />
         </Link>
 
         <nav className="header-nav desktop-only">

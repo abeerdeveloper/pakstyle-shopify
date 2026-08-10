@@ -20,7 +20,7 @@ export default function Footer(){
         <div className="footer-grid">
           {/* Brand Column */}
           <div className="footer-brand">
-            <img src="/pakstyle-logo.png" alt="PakStyle" className="footer-logo" />
+            <img src="/pakstyle-logo-light.svg" alt="PakStyle" className="footer-logo" />
             <p className="footer-tagline">Dress Bold. Live Bold.</p>
             <p className="footer-desc">Premium Pakistani streetwear blending heritage craftsmanship with modern urban fashion.</p>
             <div className="footer-socials">
