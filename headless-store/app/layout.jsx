@@ -4,8 +4,13 @@ import Footer from '../components/Footer';
 import { CartProvider } from '../context/CartContext';
 
 export const metadata = {
-  title: 'PakStyle',
-  description: 'Dress Bold. Live Bold.'
+  title: 'PakStyle — Premium Pakistani Streetwear',
+  description: 'Dress Bold. Live Bold. Premium Pakistani streetwear blending heritage craftsmanship with modern urban fashion.',
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/icon.png',
+  },
 };
 
 export default function RootLayout({ children }) {
