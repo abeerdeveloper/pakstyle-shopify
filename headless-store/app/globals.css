@@ -55,7 +55,7 @@ button, input, textarea, select {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 80px;
+  height: 90px;
 }
 
 .header-logo-link {
@@ -65,7 +65,8 @@ button, input, textarea, select {
 }
 
 .header-logo {
-  height: 44px;
+  height: 64px;
+  max-height: 64px;
   width: auto;
   object-fit: contain;
 }
@@ -957,7 +958,7 @@ button, input, textarea, select {
 }
 
 .footer-logo {
-  height: 42px;
+  height: 60px;
   margin-bottom: 16px;
   filter: brightness(0) invert(1);
 }
