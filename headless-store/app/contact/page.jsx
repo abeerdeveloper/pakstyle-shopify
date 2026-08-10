@@ -1,10 +1,30 @@
 'use client';
 import { useState } from 'react';
-import { Mail, Phone, MapPin } from 'lucide-react';
+import { Mail, Phone, MapPin, Clock, MessageSquare, ChevronDown, CheckCircle2, Send } from 'lucide-react';
 
 export default function ContactPage() {
-  const [formState, setFormState] = useState({ name: '', email: '', phone: '', message: '' });
+  const [formState, setFormState] = useState({ name: '', email: '', phone: '', subject: 'General Query', message: '' });
   const [submitted, setSubmitted] = useState(false);
+  const [openFaq, setOpenFaq] = useState(0);
+
+  const faqs = [
+    {
+      q: "What is your delivery timeframe across Pakistan?",
+      a: "Orders in major cities (Lahore, Karachi, Islamabad, Rawalpindi) are delivered in 2-3 business days. Other regions across Pakistan take 3-5 business days."
+    },
+    {
+      q: "Do you offer Cash on Delivery (COD)?",
+      a: "Yes! We offer 100% Cash on Delivery nationwide across Pakistan on all orders. You can inspect your parcel upon arrival."
+    },
+    {
+      q: "How does the 7-day size exchange process work?",
+      a: "If your garment size isn't a perfect fit, simply contact our support team within 7 days. We will pick up the item and ship the replacement size free of charge."
+    },
+    {
+      q: "Where is PakStyle located?",
+      a: "Our flagship design studio & headquarters is located in Abbottabad, Pakistan, with fulfillment warehouses in Lahore and Karachi."
+    }
+  ];
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -14,45 +34,57 @@ export default function ContactPage() {
   const handleSubmit = (event) => {
     event.preventDefault();
     setSubmitted(true);
-    setFormState({ name: '', email: '', phone: '', message: '' });
+    setFormState({ name: '', email: '', phone: '', subject: 'General Query', message: '' });
   };
 
   return (
-    <div>
-      <section style={{ background: '#0F172A', padding: '72px 24px', textAlign: 'center' }}>
-        <div style={{ maxWidth: 720, margin: '0 auto' }}>
-          <h1 style={{ margin: 0, color: '#FFFFFF', fontFamily: 'var(--font-heading)', fontSize: 48, fontWeight: 800 }}>Contact</h1>
-          <p style={{ marginTop: 16, color: '#E5E7EB', fontSize: 18, lineHeight: 1.7 }}>
-            We'd love to hear from you. Drop us a message anytime!
+    <div className="container" style={{paddingBottom: 80}}>
+      {/* Contact Hero Banner */}
+      <section className="contact-hero">
+        <div className="contact-hero-content">
+          <span className="hero-badge">
+            <MessageSquare size={14} style={{display:'inline', marginRight: 6}} /> Get In Touch
+          </span>
+          <h1 className="contact-hero-title">We'd Love to Hear From You</h1>
+          <p className="contact-hero-subtitle">
+            Have questions about fit, order status, or custom sizing? Our team is available 6 days a week to assist you.
           </p>
         </div>
       </section>
 
-      <section style={{ background: '#FFFFFF', padding: '48px 24px' }}>
-        <div className="container" style={{ display: 'grid', gridTemplateColumns: '60% 40%', gap: 24, alignItems: 'stretch' }}>
-          <div style={{ background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: 16, padding: 40, boxShadow: '0 20px 50px rgba(15, 23, 42, 0.06)' }}>
-            <h2 style={{ margin: 0, fontFamily: 'var(--font-heading)', fontSize: 28, color: '#0F172A' }}>Send Us a Message</h2>
-            <p style={{ marginTop: 12, color: '#6B7280', fontSize: 15 }}>Fill out the form below and our team will get back to you shortly.</p>
-            {submitted && (
-              <div style={{ marginTop: 24, padding: 16, borderRadius: 12, background: '#ECFDF5', color: '#166534', border: '1px solid #D1FAE5' }}>
-                Thank you! Your message has been received.
+      {/* Main Grid: Form + Info Cards */}
+      <section className="contact-grid-section">
+        {/* Form Container */}
+        <div className="contact-form-card">
+          <h2 className="contact-card-title">Send Us a Message</h2>
+          <p className="contact-card-desc">Fill out the details below and we will respond within 2 hours.</p>
+
+          {submitted && (
+            <div className="contact-success-alert">
+              <CheckCircle2 size={20} />
+              <div>
+                <strong>Thank you for contacting PakStyle!</strong>
+                <p style={{margin: '2px 0 0', fontSize: 14}}>Your message has been dispatched to our support team.</p>
               </div>
-            )}
-            <form onSubmit={handleSubmit} style={{ marginTop: 24, display: 'grid', gap: 20 }}>
-              <label style={{ display: 'grid', gap: 8, fontSize: 14, color: '#111827', fontWeight: 600 }}>
-                Name
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="contact-form">
+            <div className="form-row-2">
+              <div className="form-group">
+                <label className="form-label">Full Name *</label>
                 <input
                   type="text"
                   name="name"
                   value={formState.name}
                   onChange={handleChange}
-                  placeholder="Your name"
+                  placeholder="e.g. Abeer Awan"
                   required
-                  style={{ width: '100%', padding: '14px 16px', borderRadius: 12, border: '1px solid #D1D5DB', fontSize: 15, fontFamily: 'var(--font-body)' }}
+                  className="form-input"
                 />
-              </label>
-              <label style={{ display: 'grid', gap: 8, fontSize: 14, color: '#111827', fontWeight: 600 }}>
-                Email
+              </div>
+              <div className="form-group">
+                <label className="form-label">Email Address *</label>
                 <input
                   type="email"
                   name="email"
@@ -60,88 +92,136 @@ export default function ContactPage() {
                   onChange={handleChange}
                   placeholder="you@example.com"
                   required
-                  style={{ width: '100%', padding: '14px 16px', borderRadius: 12, border: '1px solid #D1D5DB', fontSize: 15, fontFamily: 'var(--font-body)' }}
+                  className="form-input"
                 />
-              </label>
-              <label style={{ display: 'grid', gap: 8, fontSize: 14, color: '#111827', fontWeight: 600 }}>
-                Phone
+              </div>
+            </div>
+
+            <div className="form-row-2">
+              <div className="form-group">
+                <label className="form-label">Phone Number</label>
                 <input
                   type="tel"
                   name="phone"
                   value={formState.phone}
                   onChange={handleChange}
-                  placeholder="+92 300 0000000"
-                  style={{ width: '100%', padding: '14px 16px', borderRadius: 12, border: '1px solid #D1D5DB', fontSize: 15, fontFamily: 'var(--font-body)' }}
+                  placeholder="+92 300 1234567"
+                  className="form-input"
                 />
-              </label>
-              <label style={{ display: 'grid', gap: 8, fontSize: 14, color: '#111827', fontWeight: 600 }}>
-                Message
-                <textarea
-                  name="message"
-                  value={formState.message}
-                  onChange={handleChange}
-                  placeholder="Tell us how we can help..."
-                  rows={6}
-                  required
-                  style={{ width: '100%', padding: '14px 16px', borderRadius: 12, border: '1px solid #D1D5DB', fontSize: 15, fontFamily: 'var(--font-body)', resize: 'vertical' }}
-                />
-              </label>
-              <button type="submit" style={{ width: '100%', background: '#F97316', color: '#FFFFFF', border: 'none', borderRadius: 12, padding: '16px 20px', fontSize: 16, fontWeight: 700, cursor: 'pointer', fontFamily: 'var(--font-heading)' }}>
-                Send Message
-              </button>
-            </form>
-          </div>
-
-          <div style={{ display: 'grid', gap: 20 }}>
-            <div style={{ background: '#0F172A', borderRadius: 16, padding: 32, color: '#FFFFFF', display: 'grid', gap: 20, minHeight: 220 }}>
-              <div>
-                <h3 style={{ margin: 0, fontFamily: 'var(--font-heading)', fontSize: 24 }}>Get in Touch</h3>
-                <p style={{ marginTop: 8, color: '#D1D5DB' }}>Reach out to us via email, phone, or visit our location.</p>
               </div>
-              <div style={{ display: 'grid', gap: 16 }}>
-                <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-                  <span style={{ minWidth: 36, minHeight: 36, borderRadius: 12, background: '#F97316', display: 'grid', placeItems: 'center' }}><Mail size={20} color="#FFFFFF" /></span>
-                  <div>
-                    <div style={{ fontWeight: 600 }}>Email</div>
-                    <div style={{ color: '#D1D5DB' }}>info@pakstyle.pk</div>
-                  </div>
-                </div>
-                <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-                  <span style={{ minWidth: 36, minHeight: 36, borderRadius: 12, background: '#F97316', display: 'grid', placeItems: 'center' }}><Phone size={20} color="#FFFFFF" /></span>
-                  <div>
-                    <div style={{ fontWeight: 600 }}>Phone</div>
-                    <div style={{ color: '#D1D5DB' }}>+92 300 0000000</div>
-                  </div>
-                </div>
-                <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-                  <span style={{ minWidth: 36, minHeight: 36, borderRadius: 12, background: '#F97316', display: 'grid', placeItems: 'center' }}><MapPin size={20} color="#FFFFFF" /></span>
-                  <div>
-                    <div style={{ fontWeight: 600 }}>Location</div>
-                    <div style={{ color: '#D1D5DB' }}>Abbottabad, Pakistan</div>
-                  </div>
-                </div>
+              <div className="form-group">
+                <label className="form-label">Subject</label>
+                <select
+                  name="subject"
+                  value={formState.subject}
+                  onChange={handleChange}
+                  className="form-input"
+                >
+                  <option value="General Query">General Query</option>
+                  <option value="Order Tracking">Order Tracking</option>
+                  <option value="Size Exchange">Size Exchange</option>
+                  <option value="Wholesale Inquiry">Wholesale Inquiry</option>
+                </select>
               </div>
             </div>
 
-            <div style={{ background: '#0F172A', borderRadius: 16, padding: 32, color: '#FFFFFF', borderLeft: '4px solid #F97316', display: 'grid', gap: 16 }}>
-              <h3 style={{ margin: 0, fontFamily: 'var(--font-heading)', fontSize: 24 }}>Business Hours</h3>
-              <div style={{ display: 'grid', gap: 8 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', color: '#D1D5DB' }}><span>Monday - Friday</span><span>9:00 AM - 6:00 PM</span></div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', color: '#D1D5DB' }}><span>Saturday</span><span>10:00 AM - 4:00 PM</span></div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', color: '#D1D5DB' }}><span>Sunday</span><span>Closed</span></div>
+            <div className="form-group">
+              <label className="form-label">Your Message *</label>
+              <textarea
+                name="message"
+                value={formState.message}
+                onChange={handleChange}
+                placeholder="Tell us how we can help you..."
+                rows={5}
+                required
+                className="form-input"
+                style={{resize:'vertical'}}
+              />
+            </div>
+
+            <button type="submit" className="contact-submit-btn">
+              Send Message <Send size={18} />
+            </button>
+          </form>
+        </div>
+
+        {/* Info Cards Side */}
+        <div className="contact-info-column">
+          <div className="contact-info-card">
+            <h3 className="info-card-heading">Contact Details</h3>
+            
+            <div className="info-item">
+              <div className="info-icon-badge">
+                <Mail size={20} />
               </div>
+              <div>
+                <span className="info-item-label">Email Us</span>
+                <span className="info-item-value">support@pakstyle.pk</span>
+              </div>
+            </div>
+
+            <div className="info-item">
+              <div className="info-icon-badge">
+                <Phone size={20} />
+              </div>
+              <div>
+                <span className="info-item-label">Call / WhatsApp</span>
+                <span className="info-item-value">+92 300 0000000</span>
+              </div>
+            </div>
+
+            <div className="info-item">
+              <div className="info-icon-badge">
+                <MapPin size={20} />
+              </div>
+              <div>
+                <span className="info-item-label">Headquarters</span>
+                <span className="info-item-value">PakStyle Studio, Abbottabad, Pakistan</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="contact-info-card" style={{borderLeft: '4px solid var(--color-accent)'}}>
+            <h3 className="info-card-heading" style={{display:'flex', alignItems:'center', gap:8}}>
+              <Clock size={20} color="var(--color-accent)" /> Operating Hours
+            </h3>
+            <div className="hours-row">
+              <span>Monday – Saturday</span>
+              <span>10:00 AM – 8:00 PM</span>
+            </div>
+            <div className="hours-row">
+              <span>Sunday</span>
+              <span style={{color:'var(--color-accent)'}}>Closed</span>
             </div>
           </div>
         </div>
       </section>
 
-      <style jsx>{`
-        @media (max-width: 1024px) {
-          .container {
-            display: block !important;
-          }
-        }
-      `}</style>
+      {/* FAQ Accordion Section */}
+      <section className="faq-section">
+        <h2 className="faq-title">Frequently Asked Questions</h2>
+        <p className="faq-subtitle">Quick answers to common questions about orders, shipping, and sizing.</p>
+
+        <div className="faq-list">
+          {faqs.map((faq, index) => (
+            <div
+              key={index}
+              className={`faq-item ${openFaq === index ? 'faq-item-open' : ''}`}
+              onClick={() => setOpenFaq(openFaq === index ? -1 : index)}
+            >
+              <div className="faq-question">
+                <span>{faq.q}</span>
+                <ChevronDown size={20} className="faq-chevron" />
+              </div>
+              {openFaq === index && (
+                <div className="faq-answer">
+                  {faq.a}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
